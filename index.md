@@ -1,6 +1,8 @@
-# How to set up your own BitBurrow VPN server
+---
+title: How to set up your own BitBurrow VPN server
+---
 
-## THIS SOFTWARE DOES NOT EXIST YET
+## NOTE: THIS SOFTWARE DOES NOT EXIST YET
 
 Everything below is proposed draft documentation. The software to do what is described is being developed and is not at all usable yet.
 
