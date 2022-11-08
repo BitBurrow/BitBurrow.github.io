@@ -34,13 +34,20 @@ BitBurrow is a set of tools to help you set up and use a VPN server anywhere--at
 
 ## Getting started
 
-1. Gather the items from the [What you will need](#What-you-will-need) section.
+1. Gather the items from the [What you will need](#what-you-will-need) section.
 1. Install and run the BitBurrow app for Android on a device at the same location as the router. It is available from the [Google Play Store](https://play.google.com/store/apps/details?id=com.bitburrow.app) or [F-Droid](https://f-droid.org/en/packages/com.bitburrow.app/).
 
-The BitBurrow app will walk you through the rest of the process. Here is a summary of the process.
+The BitBurrow app will walk you through the rest of the process. Here is a summary of that process.
 
 1. Scan your QR-code for the BitBurrow coupon or enter the information manually.
 1. You will be given a login key and be asked to write it down in a safe place.
 1. Plug in the new router and connect the Android device to its WiFi.
 1. If everything works as planned, BitBurrow will configure your router as a VPN server, prompting you if necessary. The process normally takes a few minutes.
 1. You can use the same BitBurrow app to add, edit, and delete VPN client devices (phones, laptops, other routers, etc.) to use the internet through your "VPN home" location.
+
+## Links
+
+* [source code for the BitBurrow hub](https://github.com/BitBurrow/BitBurrow)
+* [source code for the BitBurrow app](https://github.com/BitBurrow/BitBurrow/tree/main/app)
+* [How to set up a BitBurrow hub](/how-to-set-up-a-bitburrow-hub)
+* [source code for *this* website](https://github.com/BitBurrow/BitBurrow.github.io)
