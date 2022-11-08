@@ -47,7 +47,8 @@ The BitBurrow app will walk you through the rest of the process. Here is a summa
 
 ## Links
 
-* [source code for the BitBurrow hub](https://github.com/BitBurrow/BitBurrow)
-* [source code for the BitBurrow app](https://github.com/BitBurrow/BitBurrow/tree/main/app)
+* [BitBurrow website](https://bitburrow.com)
+* [Source code for the BitBurrow hub](https://github.com/BitBurrow/BitBurrow)
+* [Source code for the BitBurrow app](https://github.com/BitBurrow/BitBurrow/tree/main/app)
 * [How to set up a BitBurrow hub](/how-to-set-up-a-bitburrow-hub)
-* [source code for *this* website](https://github.com/BitBurrow/BitBurrow.github.io)
+* [Source code for *this* website](https://github.com/BitBurrow/BitBurrow.github.io)
