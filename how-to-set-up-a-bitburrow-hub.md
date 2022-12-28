@@ -75,7 +75,7 @@ This section is recommended but not required. It helps with security by isolatin
     ```
     sudo -u bitburrow python3 -m pip install --no-warn-script-location git+https://github.com/BitBurrow/BitBurrow.git@main
     ```
-### Run automatically at startup
+### Run BitBurrow hub automatically at startup
 
 1. Configure (run inside container):
     ```
@@ -124,3 +124,55 @@ This section is recommended but not required. It helps with security by isolatin
     lxc config device add $VMNAME sshport proxy listen=tcp:0.0.0.0:$SSHPORT connect=tcp:127.0.0.1:$SSHPORT
     lxc config device add $VMNAME wgport proxy listen=udp:0.0.0.0:$WGPORT connect=udp:127.0.0.1:$WGPORT
     ```
+ ### Set up BIND nameserver
+
+In the steps below, replace `rxb.example.org` with your BitBurrow hub domain name and `example.org` with the parent domain. Also, replace `1.2.3.4` with the IP address of your BitBurrow hub machine.
+
+1. Forward DNS from internet (on host):
+    ```
+    VMNAME=bitburrow
+    lxc config device add $VMNAME udpdns proxy listen=udp:1.2.3.4:53 connect=udp:127.0.0.1:53
+    lxc config device add $VMNAME tcpdns proxy listen=tcp:1.2.3.4:53 connect=tcp:127.0.0.1:53
+1. Install: `sudo apt install -y bind9`
+1. Test recursive DNS look-ups via `dig @127.0.0.1 google.com +short`--should give answers
+1. Edit `/etc/bind/named.conf.options` and after `listen-on-v6` line add: `recursion no;`
+1. Restart BIND (`sudo service bind9 restart`) and retest lookups (`dig @127.0.0.1 google.com +short`)--should give no answers
+1. Edit `/etc/bind/named.conf.local` and add:
+    ```
+    zone "rxb.example.net" {
+	    type master;
+	    file "/var/cache/bind/db.bitburrow";
+	    update-policy local;
+    };
+    ```
+1. Begin with a template: `sudo cp -i /etc/bind/db.local /var/cache/bind/db.bitburrow`
+1. Edit zone file `/var/cache/bind/db.bitburrow` (PROOF OF CONCEPT):
+    ```
+    $TTL	500
+    @	IN	SOA	rxb.example.net. root.localhost. (
+			          5		; Serial
+			     604800		; Refresh
+			      86400		; Retry
+			    2419200		; Expire
+			    500 )	; Negative Cache TTL
+    ;
+    @	IN	NS	localhost.
+    @	IN	A	1.2.3.4
+    test	IN	A	192.168.10.1
+    test2	IN	CNAME	test
+    ```
+1. Fix permissions:
+    ```
+    sudo chmod 644 /var/cache/bind/db.bitburrow
+    sudo chown bind:bind /var/cache/bind/db.bitburrow
+    ```
+1. Check config and restart BIND: `sudo named-checkconf && sudo service bind9 restart`
+1. Test dynamic updates: `printf "zone rxb.example.net\nupdate delete testa.rxb.example.net.\nupdate add testa.rxb.example.net. 600 IN A 11.11.11.11\nsend\n" |sudo -u bind nsupdate -l`
+
+### Make BitBurrow hub the authoritative name server
+
+1. Configure the nameserver for example.org (usually done through the website of your domain name registrar), add an NS record for rxb.example.org which points to rxb.example.org. (This tells the internet that rxb.example.org is the authoritative nameserver for *.rxb.example.org.) Then, add an A record for rxb.example.org which points to rxb.example.org (this is called a "glue record"; [more info](https://en.wikipedia.org/wiki/Domain_Name_System#Circular_dependencies_and_glue_records)). Here is a partial zone file for example.org which represents these two records:
+	```
+	rxb.example.org. 86400 IN NS rxb.example.org.
+	rxb.example.org. 3600 IN A 1.2.3.4
+	```
