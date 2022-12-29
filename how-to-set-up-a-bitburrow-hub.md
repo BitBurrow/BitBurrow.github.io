@@ -71,10 +71,11 @@ This section is recommended but not required. It helps with security by isolatin
     sudo adduser --disabled-password --gecos "" --quiet bitburrow
     printf "bitburrow  ALL = NOPASSWD: /usr/bin/wg *\nbitburrow  ALL = NOPASSWD: /bin/ip *\nbitburrow  ALL = NOPASSWD: /usr/sbin/sysctl *\nbitburrow  ALL = NOPASSWD: /usr/sbin/iptables *\n" |sudo tee /etc/sudoers.d/bitburrow >/dev/null
     ```
-1. Install BitBurrow hub (run inside container):
+1. Install (or update) BitBurrow hub (run inside container):
     ```
-    sudo -u bitburrow python3 -m pip install --no-warn-script-location git+https://github.com/BitBurrow/BitBurrow.git@main
+    sudo -u bitburrow python3 -m pip install --force-reinstall --no-warn-script-location git+https://github.com/BitBurrow/BitBurrow.git@main
     ```
+
 ### Run BitBurrow hub automatically at startup
 
 1. Configure (run inside container):
