@@ -76,31 +76,6 @@ This section is recommended but not required. It helps with security by isolatin
     sudo -u bitburrow python3 -m pip install --force-reinstall --no-warn-script-location git+https://github.com/BitBurrow/BitBurrow.git@main
     ```
 
-### Run BitBurrow hub automatically at startup
-
-1. Configure (run inside container):
-    ```
-    cd /tmp
-    printf "[Unit]\nDescription=BitBurrow\n" >bitburrow.service
-    printf "Documentation=https://bitburrow.com\n" >>bitburrow.service
-    printf "After=network.target network-online.target\n\n" >>bitburrow.service
-    printf "[Service]\nType=exec\nRestartSec=2s\nUser=bitburrow\n" >>bitburrow.service
-    printf "Group=bitburrow\nWorkingDirectory=/home/bitburrow\n" >>bitburrow.service
-    printf "ExecStart=/home/bitburrow/.local/bin/bbhub --api\n" >>bitburrow.service
-    printf "Restart=always\n" >>bitburrow.service
-    printf "PrivateTmp=true\nPrivateDevices=false\nNoNewPrivileges=false\n\n" >>bitburrow.service
-    printf "[Install]\nWantedBy=multi-user.target\n" >>bitburrow.service
-    sudo mv bitburrow.service /lib/systemd/system/bitburrow.service
-    sudo systemctl enable /lib/systemd/system/bitburrow.service
-    sudo systemctl daemon-reload
-    sudo systemctl enable bitburrow
-    sudo systemctl start bitburrow
-    ```
-1. Verify (run inside container):
-    * Reboot (normally `sudo reboot`), wait for system to come back up, and sign in again.
-    * Check that the service is running: `sudo systemctl status bitburrow`
-    * If there are errors (e.g. `code=exited, status=3`), use `journalctl -u bitburrow` to help diagnose.
-
 ### Configure your domain and ports
 
 In the steps below, replace `rxb.example.org` with your BitBurrow hub domain.
@@ -126,6 +101,31 @@ In the steps below, replace `rxb.example.org` with your BitBurrow hub domain.
     lxc config device add $VMNAME sshport proxy listen=tcp:0.0.0.0:$SSHPORT connect=tcp:127.0.0.1:$SSHPORT
     lxc config device add $VMNAME wgport proxy listen=udp:0.0.0.0:$WGPORT connect=udp:127.0.0.1:$WGPORT
     ```
+
+### Run BitBurrow hub automatically at startup
+
+1. Configure (run inside container):
+    ```
+    cd /tmp
+    printf "[Unit]\nDescription=BitBurrow\n" >bitburrow.service
+    printf "Documentation=https://bitburrow.com\n" >>bitburrow.service
+    printf "After=network.target network-online.target\n\n" >>bitburrow.service
+    printf "[Service]\nType=exec\nRestartSec=2s\nUser=bitburrow\n" >>bitburrow.service
+    printf "Group=bitburrow\nWorkingDirectory=/home/bitburrow\n" >>bitburrow.service
+    printf "ExecStart=/home/bitburrow/.local/bin/bbhub --api\n" >>bitburrow.service
+    printf "Restart=always\n" >>bitburrow.service
+    printf "PrivateTmp=true\nPrivateDevices=false\nNoNewPrivileges=false\n\n" >>bitburrow.service
+    printf "[Install]\nWantedBy=multi-user.target\n" >>bitburrow.service
+    sudo mv bitburrow.service /lib/systemd/system/bitburrow.service
+    sudo systemctl enable /lib/systemd/system/bitburrow.service
+    sudo systemctl daemon-reload
+    sudo systemctl enable bitburrow
+    sudo systemctl start bitburrow
+    ```
+1. Verify (run inside container):
+    * Reboot (normally `sudo reboot`), wait for system to come back up, and sign in again.
+    * Check that the service is running: `sudo systemctl status bitburrow`
+    * If there are errors (e.g. `code=exited, status=3`), use `journalctl -u bitburrow` to help diagnose.
 
 ### Set up BIND nameserver
 
