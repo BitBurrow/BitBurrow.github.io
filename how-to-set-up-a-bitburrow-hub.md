@@ -101,15 +101,16 @@ This section is recommended but not required. It helps with security by isolatin
     * Check that the service is running: `sudo systemctl status bitburrow`
     * If there are errors (e.g. `code=exited, status=3`), use `journalctl -u bitburrow` to help diagnose.
 
-
 ### Configure your domain and ports
+
+In the steps below, replace `rxb.example.org` with your BitBurrow hub domain.
 
 1. Configure your domain (run inside container):
     ```
-    sudo -u bitburrow /home/bitburrow/.local/bin/bbhub --set-domain 〚your BitBurrow domain〛
+    sudo -u bitburrow /home/bitburrow/.local/bin/bbhub --set-domain rxb.example.org
     ```
-1. To view the configured domain, replace `set` with `get` in the above line.
-1. Customize ports (optional; run inside container):
+1. To view the configured domain, replace `set` with `get` in the above line and omit the domain.
+1. Customize ports (optional (the default is to use random available ports); run inside container):
     ```
     sudo -u bitburrow /home/bitburrow/.local/bin/bbhub --set-ssh-port 〚your ssh port〛
     sudo -u bitburrow /home/bitburrow/.local/bin/bbhub --set-wg-port 〚your WireGuard port〛
@@ -125,7 +126,8 @@ This section is recommended but not required. It helps with security by isolatin
     lxc config device add $VMNAME sshport proxy listen=tcp:0.0.0.0:$SSHPORT connect=tcp:127.0.0.1:$SSHPORT
     lxc config device add $VMNAME wgport proxy listen=udp:0.0.0.0:$WGPORT connect=udp:127.0.0.1:$WGPORT
     ```
- ### Set up BIND nameserver
+
+### Set up BIND nameserver
 
 In the steps below, replace `rxb.example.org` with your BitBurrow hub domain name and `example.org` with the parent domain. Also, replace `1.2.3.4` with the IP address of your BitBurrow hub machine.
 
@@ -140,7 +142,7 @@ In the steps below, replace `rxb.example.org` with your BitBurrow hub domain nam
 1. Restart BIND (`sudo service bind9 restart`) and retest lookups (`dig @127.0.0.1 google.com +short`)--should give no answers
 1. Edit `/etc/bind/named.conf.local` and add:
     ```
-    zone "rxb.example.net" {
+    zone "rxb.example.org" {
 	    type master;
 	    file "/var/cache/bind/db.bitburrow";
 	    update-policy local;
@@ -150,7 +152,7 @@ In the steps below, replace `rxb.example.org` with your BitBurrow hub domain nam
 1. Edit zone file `/var/cache/bind/db.bitburrow` (PROOF OF CONCEPT):
     ```
     $TTL	500
-    @	IN	SOA	rxb.example.net. root.localhost. (
+    @	IN	SOA	rxb.example.org. root.localhost. (
 			          5		; Serial
 			     604800		; Refresh
 			      86400		; Retry
@@ -168,7 +170,7 @@ In the steps below, replace `rxb.example.org` with your BitBurrow hub domain nam
     sudo chown bind:bind /var/cache/bind/db.bitburrow
     ```
 1. Check config and restart BIND: `sudo named-checkconf && sudo service bind9 restart`
-1. Test dynamic updates: `printf "zone rxb.example.net\nupdate delete testa.rxb.example.net.\nupdate add testa.rxb.example.net. 600 IN A 11.11.11.11\nsend\n" |sudo -u bind nsupdate -l`
+1. Test dynamic updates (see that no errors are displayed): `printf "zone rxb.example.org\nupdate delete testa.rxb.example.org.\nupdate add testa.rxb.example.org. 600 IN A 11.11.11.11\nsend\n" |sudo -u bind /usr/bin/nsupdate -l`
 
 ### Make BitBurrow hub the authoritative name server
 
@@ -177,3 +179,5 @@ In the steps below, replace `rxb.example.org` with your BitBurrow hub domain nam
 	rxb.example.org. 86400 IN NS rxb.example.org.
 	rxb.example.org. 3600 IN A 1.2.3.4
 	```
+1. From a computer elsewhere on the internet, test your DNS server: `dig testa.rxb.example.org`--should display 11.11.11.11
+
