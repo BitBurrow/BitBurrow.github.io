@@ -182,3 +182,32 @@ In the steps below, replace `rxb.example.org` with your BitBurrow hub domain nam
 	```
 1. From a computer elsewhere on the internet, test your DNS server: `dig testa.rxb.example.org`--should display `11.11.11.11`
 
+### Request Let's Encrypt wildcard TLS certificate:
+
+1. Install Certbot: `sudo snap install --classic certbot`
+1. Create `/opt/certbot_hook.sh`:
+    ```
+    #!/bin/bash
+    DNS_ZONE=
+    HOST='_acme-challenge'
+    sudo -u bind /usr/bin/nsupdate -l << EOM
+    zone ${DNS_ZONE}
+    update delete ${HOST}.${CERTBOT_DOMAIN} A
+    update add ${HOST}.${CERTBOT_DOMAIN} 300 TXT "${CERTBOT_VALIDATION}"
+    send
+    EOM
+    sleep 5
+    ```
+1. Fix permissions:
+    ```
+    sudo chown bind:bind /opt/certbot_hook.sh
+    sudo chmod 660 /opt/certbot_hook.sh
+    ```
+1. Run Certbot:
+    ```
+    DNS_ZONE=rxb.example.org
+    sudo perl -p -i -e "s|^DNS_ZONE[ =].*|DNS_ZONE=$DNS_ZONE|;" /opt/certbot_hook.sh
+    sudo certbot certonly --agree-tos --manual --preferred-challenge=dns --manual-auth-hook=/opt/certbot_hook.sh --register-unsafely-without-email --manual-public-ip-logging-ok -d '*.'$DNS_ZONE -d $DNS_ZONE --server https://acme-v02.api.letsencrypt.org/directory
+    sudo systemctl list-timers snap.certbot.renew.timer  # FYI
+    ```
+
