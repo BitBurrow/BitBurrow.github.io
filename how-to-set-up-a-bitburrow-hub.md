@@ -15,7 +15,7 @@ BitBurrow has two major components--an app and a hub. ...
 ## What you will need
 
 1. Some background in Linux system administration and working on the command line.
-1. A Linux server with a fixed, public IPv4 address, e.g. from [DigitalOcean](https://www.digitalocean.com/), [Linode](https://www.linode.com/), or other VPS provider. BitBurrow can share the server with other services so long as TCP port 8443 is available.
+1. A Linux server with a fixed, public IPv4 address, e.g. from [DigitalOcean](https://www.digitalocean.com/), [Linode](https://www.linode.com/), or other VPS provider. BitBurrow can share the server with other services so long as TCP ports 53 and 8443, and UDP port 53 are available.
 1. A domain or subdomain name with the ability to host your own DNS (i.e. add an NS record for the subdomain).
 1. Time to manage a public server long-term.
 
@@ -25,7 +25,7 @@ BitBurrow has two major components--an app and a hub. ...
 
 ## Steps
 
-### Create a domain
+### Acquire a domain name
 
 Purchase your new domain name from a [domain name registrar](https://en.wikipedia.org/wiki/Domain_name_registrar) such as [Hover](https://www.hover.com/) or [Google Domains](https://domains.google/), **or** create a new subdomain for an existing domain such as your company or organization.
 
@@ -93,7 +93,7 @@ In the steps below, replace `rxb.example.org` with your BitBurrow hub domain.
 1. Forward ports from host to container (skip if not using a container; run on host):
     ```
     VMNAME=bitburrow  # use the same value used above
-    bbhub() { lxc exec $VMNAME -- sudo -u bitburrow /home/bitburrow/.local/bin/bbhub "$1" }
+    bbhub() { lxc exec $VMNAME -- sudo -u bitburrow /home/bitburrow/.local/bin/bbhub "$1"; }
     APIPORT=8443  # hard-coded in app
     SSHPORT=$(bbhub --get-ssh-port)
     WGPORT=$(bbhub --get-wg-port)
@@ -136,6 +136,7 @@ In the steps below, replace `rxb.example.org` with your BitBurrow hub domain nam
     VMNAME=bitburrow
     lxc config device add $VMNAME udpdns proxy listen=udp:1.2.3.4:53 connect=udp:127.0.0.1:53
     lxc config device add $VMNAME tcpdns proxy listen=tcp:1.2.3.4:53 connect=tcp:127.0.0.1:53
+    ```
 1. Install: `sudo apt install -y bind9`
 1. Test recursive DNS look-ups via `dig @127.0.0.1 google.com +short`--should give answers
 1. Edit `/etc/bind/named.conf.options` and after `listen-on-v6` line add: `recursion no;`
@@ -179,5 +180,5 @@ In the steps below, replace `rxb.example.org` with your BitBurrow hub domain nam
 	rxb.example.org. 86400 IN NS rxb.example.org.
 	rxb.example.org. 3600 IN A 1.2.3.4
 	```
-1. From a computer elsewhere on the internet, test your DNS server: `dig testa.rxb.example.org`--should display 11.11.11.11
+1. From a computer elsewhere on the internet, test your DNS server: `dig testa.rxb.example.org`--should display `11.11.11.11`
 
