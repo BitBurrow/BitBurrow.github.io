@@ -104,7 +104,9 @@ In the steps below, replace `rxb.example.org` with your BitBurrow hub domain.
 
 ### Run BitBurrow hub automatically at startup
 
-1. Configure (run inside container):
+All of these should be run inside the container.
+
+1. Configure:
     ```
     cd /tmp
     printf "[Unit]\nDescription=BitBurrow\n" >bitburrow.service
@@ -122,7 +124,7 @@ In the steps below, replace `rxb.example.org` with your BitBurrow hub domain.
     sudo systemctl enable bitburrow
     sudo systemctl start bitburrow
     ```
-1. Verify (run inside container):
+1. Verify:
     * Reboot (normally `sudo reboot`), wait for system to come back up, and sign in again.
     * Check that the service is running: `sudo systemctl status bitburrow`
     * If there are errors (e.g. `code=exited, status=3`), use `journalctl -u bitburrow` to help diagnose.
@@ -130,6 +132,8 @@ In the steps below, replace `rxb.example.org` with your BitBurrow hub domain.
 ### Set up BIND nameserver
 
 In the steps below, replace `rxb.example.org` with your BitBurrow hub domain name and `example.org` with the parent domain. Also, replace `1.2.3.4` with the IP address of your BitBurrow hub machine.
+
+All of these should be run inside the container.
 
 1. Forward DNS from internet (on host):
     ```
@@ -184,6 +188,8 @@ In the steps below, replace `rxb.example.org` with your BitBurrow hub domain nam
 
 ### Request Let's Encrypt wildcard TLS certificate:
 
+All of these should be run inside the container.
+
 1. Install Certbot: `sudo snap install --classic certbot`
 1. Create `/opt/certbot_hook.sh`:
     ```
@@ -210,4 +216,8 @@ In the steps below, replace `rxb.example.org` with your BitBurrow hub domain nam
     sudo certbot certonly --agree-tos --manual --preferred-challenge=dns --manual-auth-hook=/opt/certbot_hook.sh --register-unsafely-without-email --manual-public-ip-logging-ok -d '*.'$DNS_ZONE -d $DNS_ZONE --server https://acme-v02.api.letsencrypt.org/directory
     sudo systemctl list-timers snap.certbot.renew.timer  # FYI
     ```
-
+1. Allow BitBurrow hub access to files for https:
+    ```
+    sudo apt install -y acl
+    sudo setfacl -Rm d:user:bitburrow:rx,user:bitburrow:rx /etc/letsencrypt/
+    ```
