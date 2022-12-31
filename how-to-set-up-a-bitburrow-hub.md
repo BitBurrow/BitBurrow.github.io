@@ -135,7 +135,7 @@ In the steps below, replace `rxb.example.org` with your BitBurrow hub domain nam
 
 All of these should be run inside the container.
 
-1. Forward DNS from internet (on host):
+1. Forward DNS from internet (run on host):
     ```
     VMNAME=bitburrow
     lxc config device add $VMNAME udpdns proxy listen=udp:1.2.3.4:53 connect=udp:127.0.0.1:53
@@ -208,7 +208,7 @@ All of these should be run inside the container.
 1. Fix permissions:
     ```
     sudo chown bind:bind /opt/certbot_hook.sh
-    sudo chmod 660 /opt/certbot_hook.sh
+    sudo chmod 550 /opt/certbot_hook.sh
     ```
 1. Run Certbot:
     ```
@@ -217,8 +217,33 @@ All of these should be run inside the container.
     sudo certbot certonly --agree-tos --manual --preferred-challenge=dns --manual-auth-hook=/opt/certbot_hook.sh --register-unsafely-without-email --manual-public-ip-logging-ok -d '*.'$DNS_ZONE -d $DNS_ZONE --server https://acme-v02.api.letsencrypt.org/directory
     sudo systemctl list-timers snap.certbot.renew.timer  # FYI
     ```
+1. If you make any BIND or DNS changes in the future, verify the renewal process (optional):
+    ```
+    sudo certbot renew --dry-run
+    ```
 1. Allow BitBurrow hub access to files for https:
     ```
     sudo apt install -y acl
     sudo setfacl -Rm d:user:bitburrow:rx,user:bitburrow:rx /etc/letsencrypt/
+    ```
+
+### Configure ssh directly to container (optional)
+
+In the steps below, replace `rxb.example.org` with your BitBurrow hub domain and `18962` with a port number of your choosing.
+
+This assumes `authorized_keys` on the host is already configured for public-key ssh authentication.
+
+1. Set up ssh to container (run on host):
+    ```
+    VMNAME=bitburrow
+    lxc exec $VMNAME -- apt install -y ssh
+    cat ~/.ssh/authorized_keys |lxc exec $VMNAME -- sudo -u bitburrow bash -c 'cd; mkdir -p .ssh; cat - >> ~/.ssh/authorized_keys; chmod go-w . .ssh; chmod ugo-x,go-w .ssh/authorized_keys'
+    lxc config device add $VMNAME ssh proxy listen=tcp:0.0.0.0:18962 connect=tcp:127.0.0.1:22
+    ```
+1. On your personal computer, edit `~/.ssh/config` and add:
+    ```
+    Host bitburrow
+        HostName rxb.example.org
+        Port 18962
+        User bitburrow
     ```
