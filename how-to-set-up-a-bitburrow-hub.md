@@ -154,7 +154,7 @@ All of these should be run inside the container.
     };
     ```
 1. Begin with a template: `sudo cp -i /etc/bind/db.local /var/cache/bind/db.bitburrow`
-1. Edit zone file `/var/cache/bind/db.bitburrow` (PROOF OF CONCEPT):
+1. Edit zone file `/var/cache/bind/db.bitburrow` (PROOF OF CONCEPT; [`CAA` record info](https://letsencrypt.org/docs/caa/)):
     ```
     $TTL	500
     @	IN	SOA	rxb.example.org. root.localhost. (
@@ -166,6 +166,7 @@ All of these should be run inside the container.
     ;
     @	IN	NS	localhost.
     @	IN	A	1.2.3.4
+    @	IN	CAA	0 issue "letsencrypt.org"
     test	IN	A	192.168.10.1
     test2	IN	CNAME	test
     ```
