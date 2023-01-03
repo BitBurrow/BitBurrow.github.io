@@ -102,6 +102,26 @@ In the steps below, replace `rxb.example.org` with your BitBurrow hub domain.
     lxc config device add $VMNAME wgport proxy listen=udp:0.0.0.0:$WGPORT connect=udp:127.0.0.1:$WGPORT
     ```
 
+### Allow logging of client IP addresses
+
+This section is optional, but without these steps, BitBurrow hub will show all inbound connections as coming from `127.0.0.1`. Based on [Thomas Parrott's very helpful post](https://discuss.linuxcontainers.org/t/making-sure-that-ips-connected-to-the-containers-gameserver-proxy-shows-users-real-ip/8032/5).
+
+All of these steps should be run on the host. Replace `1.2.3.4` with the public IP address of your BitBurrow hub machine.
+
+1. Configure a static IP address for the LXC container:
+    ```
+    VMNAME=bitburrow
+    APIPORT=8443
+    export VMIP=$(lxc list $VMNAME -c4 --format=csv |grep -o '^\S*'); echo $VMIP
+    lxc stop $VMNAME
+    lxc config device override $VMNAME eth0 ipv4.address=$VMIP
+    ```
+1. Use NAT rather than a forwarding proxy:
+    ```
+    lxc config device set $VMNAME apiport nat=true listen=tcp:1.2.3.4:$APIPORT connect=tcp:0.0.0.0:$APIPORT
+    lxc start $VMNAME
+    ```
+
 ### Run BitBurrow hub automatically at startup
 
 All of these should be run inside the container.
@@ -131,7 +151,7 @@ All of these should be run inside the container.
 
 ### Set up BIND nameserver
 
-In the steps below, replace `rxb.example.org` with your BitBurrow hub domain name and `example.org` with the parent domain. Also, replace `1.2.3.4` with the IP address of your BitBurrow hub machine.
+In the steps below, replace `rxb.example.org` with your BitBurrow hub domain name and `example.org` with the parent domain. Also, replace `1.2.3.4` with the public IP address of your BitBurrow hub machine.
 
 All of these should be run inside the container.
 
