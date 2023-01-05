@@ -174,7 +174,7 @@ All of these should be run inside the container.
     };
     ```
 1. Begin with a template: `sudo cp -i /etc/bind/db.local /var/cache/bind/db.bitburrow`
-1. Edit zone file `/var/cache/bind/db.bitburrow` (PROOF OF CONCEPT; [`CAA` record info](https://letsencrypt.org/docs/caa/)):
+1. Edit zone file `/var/cache/bind/db.bitburrow` (PROOF OF CONCEPT; [`CAA` record info](https://letsencrypt.org/docs/caa/); FIXME: support ACME-CAA: [Let's Encrypt now supports ACME-CAA](https://www.devever.net/~hl/acme-caa-live), [HN comments](https://news.ycombinator.com/item?id=34035148)):
     ```
     $TTL	500
     @	IN	SOA	rxb.example.org. root.localhost. (
@@ -184,7 +184,7 @@ All of these should be run inside the container.
 			    2419200		; Expire
 			    500 )	; Negative Cache TTL
     ;
-    @	IN	NS	localhost.
+    @	IN	NS	rxb.example.org.
     @	IN	A	1.2.3.4
     @	IN	CAA	0 issue "letsencrypt.org"
     test	IN	A	192.168.10.1
