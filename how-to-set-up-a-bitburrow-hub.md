@@ -170,6 +170,7 @@ All of these should be run inside the container.
     zone "rxb.example.org" {
 	    type master;
 	    file "/var/cache/bind/db.bitburrow";
+	    allow-transfer { none; };
 	    update-policy local;
     };
     ```
