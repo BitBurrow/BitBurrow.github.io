@@ -27,7 +27,7 @@ BitBurrow has two major components--an app and a hub. ...
 
 ### Acquire a domain name
 
-Purchase your new domain name from a [domain name registrar](https://en.wikipedia.org/wiki/Domain_name_registrar) such as [Hover](https://www.hover.com/) or [Google Domains](https://domains.google/), **or** create a new subdomain for an existing domain such as your company or organization.
+Purchase your new domain name from a [domain name registrar](https://en.wikipedia.org/wiki/Domain_name_registrar) such as [Hover](https://www.hover.com/) or [Google Domains](https://domains.google/). Alternatively, create a new subdomain for an existing domain such as your company or organization. For example, if your organization owns `example.org`, you could set up `rxb.example.org` to use for BitBurrow, where `rxb` is a subdomain you choose.
 
 When choosing a domain name or subdomain, it is recommended that it *not* contain `vpn`, `proxy`, `bitburrow`, `gateway`, or similar words. Public WiFi networks that restrict VPN usage may block domain names that include these. Also, choosing a name that is easy to type will make it easier for admins setting up VPN servers.
 
@@ -45,7 +45,7 @@ These instructions are written for Ubuntu. If you are setting up a new server, u
 
 ### Create a container
 
-This section is recommended but not required. It helps with security by isolating the BitBurrow hub from other applications running on the same server, provides a firewall from the internet, and allows the hub to run processes as root without actually being root.
+This section is recommended but not required. A container helps with security by isolating BitBurrow hub from other applications running on the same server, provides a firewall from the internet, and allows the hub to run processes as root without actually being root. Additionally, to simplify the installation process below, you can run Ubuntu inside the container even if the host uses another Linux flavor.
 
 1. Install LXD: `sudo snap install lxd`
 1. Initialize LXD: `lxd init` and answer the prompts (accept the default where you are unsure)
@@ -104,7 +104,7 @@ In the steps below, replace `rxb.example.org` with your BitBurrow hub domain.
 
 ### Allow logging of client IP addresses
 
-This section is optional, but without these steps, BitBurrow hub will show all inbound connections as coming from `127.0.0.1`. Based on [Thomas Parrott's very helpful post](https://discuss.linuxcontainers.org/t/making-sure-that-ips-connected-to-the-containers-gameserver-proxy-shows-users-real-ip/8032/5).
+This section is optional, but without these steps, if it is running in a container, BitBurrow hub will show all inbound connections as coming from `127.0.0.1`. Based on [Thomas Parrott's very helpful post](https://discuss.linuxcontainers.org/t/making-sure-that-ips-connected-to-the-containers-gameserver-proxy-shows-users-real-ip/8032/5).
 
 All of these steps should be run on the host. Replace `1.2.3.4` with the public IP address of your BitBurrow hub machine.
 
@@ -151,7 +151,7 @@ All of these should be run inside the container.
 
 ### Set up BIND nameserver
 
-In the steps below, replace `rxb.example.org` with your BitBurrow hub domain name and `example.org` with the parent domain. Also, replace `1.2.3.4` with the public IP address of your BitBurrow hub machine.
+In the steps below, replace `rxb.example.org` with your BitBurrow hub domain name and `example.org` with the parent domain. Also, replace `1.2.3.4` with the public IP address of your BitBurrow hub host machine.
 
 All of these should be run inside the container.
 
