@@ -47,157 +47,61 @@ These instructions are written for Ubuntu. If you are setting up a new server, u
 
 This section is recommended but not required. A container helps with security by isolating BitBurrow hub from other applications running on the same server, provides a firewall from the internet, and allows the hub to run processes as root without actually being root. Additionally, to simplify the installation process below, you can run Ubuntu inside the container even if the host uses another Linux flavor.
 
-1. Install LXD: `sudo snap install lxd`
-1. Initialize LXD: `lxd init` and answer the prompts (accept the default where you are unsure)
-1. Create a new container, configure ports for VPN servers, and sign in:
+1. Install LXD:
+    ```
+    sudo snap install lxd
+    ```
+1. Initialize LXD--choose **one** of these lines; the first one will prompt you with options:
+    ```
+    lxd init
+    lxd init --auto --storage-backend=btrfs --storage-create-loop=10
+    ```
+1. Create a new container and sign in:
     ```
     VMNAME=bitburrow  # 'bitburrow' is the name of the new container (change it if you like)
     lxc launch ubuntu: $VMNAME
     lxc exec $VMNAME -- sudo -u ubuntu -i  # now you are in the container
     ```
-1. Configure automatic security updates for the container as well as the host (run inside container):
-    ```
-    sudo apt update
-    sudo apt install unattended-upgrades
-    sudo dpkg-reconfigure --priority=low unattended-upgrades  # choose Yes when prompted
-    ```
 
 ### Install BitBurrow hub
 
+In the third step below, replace `rxb.example.org` with your BitBurrow hub domain name and replace `1.2.3.4` with the public IP address of your BitBurrow hub host machine.
+
+1. Enable `ssh localhost` (run inside container):
+    ```
+    mkdir -p ~/.ssh/
+    ssh-keygen -q -f ~/.ssh/id_ed25519 -N '' -t ed25519
+    cat ~/.ssh/id_ed25519.pub >>~/.ssh/authorized_keys
+    echo "* $(cat /etc/ssh/ssh_host_ecdsa_key.pub)" >>~/.ssh/known_hosts
+    chmod go-w ~ ~/.ssh; chmod ugo-x,go-w ~/.ssh/authorized_keys
+    ```
 1. Install dependencies (run inside container):
     ```
     sudo apt update
-    sudo apt install -y python3-pip ssh wireguard-tools sqlite3
-    sudo adduser --disabled-password --gecos "" --quiet bitburrow
-    printf "bitburrow  ALL = NOPASSWD: /usr/bin/wg *\nbitburrow  ALL = NOPASSWD: /bin/ip *\nbitburrow  ALL = NOPASSWD: /usr/sbin/sysctl *\nbitburrow  ALL = NOPASSWD: /usr/sbin/iptables *\n" |sudo tee /etc/sudoers.d/bitburrow >/dev/null
+    sudo apt install -y wget ansible
+    mkdir -p ~/hub && cd $_
+    wget https://raw.githubusercontent.com/BitBurrow/BitBurrow/main/src/hub_installer/install.yaml
     ```
-1. Install (or update) BitBurrow hub (run inside container):
+1. Set your domain name and IP (run inside container):
     ```
-    sudo -u bitburrow python3 -m pip install --force-reinstall --no-warn-script-location git+https://github.com/BitBurrow/BitBurrow.git@main
+    sudo -u bitburrow /home/bitburrow/.local/bin/bbhub --create-admin-account
+    DOMAIN=rxb.example.org
+    IP=1.2.3.4
     ```
-
-### Configure your domain and ports
-
-In the steps below, replace `rxb.example.org` with your BitBurrow hub domain.
-
-1. Configure your domain (run inside container):
+1. Run Ansible--this will fail if you are using a container but that's okay at this point (run inside container):
     ```
-    sudo -u bitburrow /home/bitburrow/.local/bin/bbhub --set-domain rxb.example.org
-    ```
-1. To view the configured domain, replace `set` with `get` in the above line and omit the domain.
-1. Customize ports (optional (the default is to use random available ports); run inside container):
-    ```
-    sudo -u bitburrow /home/bitburrow/.local/bin/bbhub --set-ssh-port 〚your ssh port〛
-    sudo -u bitburrow /home/bitburrow/.local/bin/bbhub --set-wg-port 〚your WireGuard port〛
-    ```
-1. Forward ports from host to container (skip if not using a container; run on host):
-    ```
-    VMNAME=bitburrow  # use the same value used above
-    bbhub() { lxc exec $VMNAME -- sudo -u bitburrow /home/bitburrow/.local/bin/bbhub "$1"; }
-    APIPORT=8443  # hard-coded in app
-    SSHPORT=$(bbhub --get-ssh-port)
-    WGPORT=$(bbhub --get-wg-port)
-    lxc config device add $VMNAME apiport proxy listen=tcp:0.0.0.0:$APIPORT connect=tcp:127.0.0.1:$APIPORT
-    lxc config device add $VMNAME sshport proxy listen=tcp:0.0.0.0:$SSHPORT connect=tcp:127.0.0.1:$SSHPORT
-    lxc config device add $VMNAME wgport proxy listen=udp:0.0.0.0:$WGPORT connect=udp:127.0.0.1:$WGPORT
+    ansible-playbook -i localhost, install.yaml --extra-vars "domain=$DOMAIN ip=$IP"
     ```
 
-### Allow logging of client IP addresses
+### Forward ports to the container
 
-This section is optional, but without these steps, if it is running in a container, BitBurrow hub will show all inbound connections as coming from `127.0.0.1`. Based on [Thomas Parrott's very helpful post](https://discuss.linuxcontainers.org/t/making-sure-that-ips-connected-to-the-containers-gameserver-proxy-shows-users-real-ip/8032/5).
-
-All of these steps should be run on the host. Replace `1.2.3.4` with the public IP address of your BitBurrow hub machine.
-
-1. Configure a static IP address for the LXC container:
+1. Download and run the script generated by `ansible-playbook`, above (run on host):
     ```
-    VMNAME=bitburrow
-    APIPORT=8443
-    export VMIP=$(lxc list $VMNAME -c4 --format=csv |grep -o '^\S*'); echo $VMIP
-    lxc stop $VMNAME
-    lxc config device override $VMNAME eth0 ipv4.address=$VMIP
+    VMNAME=bitburrow  # use the same name you used for this above
+    lxc file pull $VMNAME/home/bitburrow/set_port_forwarding.sh /tmp/set_port_forwarding.sh
+    /tmp/set_port_forwarding.sh
     ```
-1. Use NAT rather than a forwarding proxy:
-    ```
-    lxc config device set $VMNAME apiport nat=true listen=tcp:1.2.3.4:$APIPORT connect=tcp:0.0.0.0:$APIPORT
-    lxc start $VMNAME
-    ```
-
-### Run BitBurrow hub automatically at startup
-
-All of these should be run inside the container.
-
-1. Configure:
-    ```
-    cd /tmp
-    printf "[Unit]\nDescription=BitBurrow\n" >bitburrow.service
-    printf "Documentation=https://bitburrow.com\n" >>bitburrow.service
-    printf "After=network.target network-online.target\n\n" >>bitburrow.service
-    printf "[Service]\nType=exec\nRestartSec=2s\nUser=bitburrow\n" >>bitburrow.service
-    printf "Group=bitburrow\nWorkingDirectory=/home/bitburrow\n" >>bitburrow.service
-    printf "ExecStart=/home/bitburrow/.local/bin/bbhub --api\n" >>bitburrow.service
-    printf "Restart=always\n" >>bitburrow.service
-    printf "PrivateTmp=true\nPrivateDevices=false\nNoNewPrivileges=false\n\n" >>bitburrow.service
-    printf "[Install]\nWantedBy=multi-user.target\n" >>bitburrow.service
-    sudo mv bitburrow.service /lib/systemd/system/bitburrow.service
-    sudo systemctl enable /lib/systemd/system/bitburrow.service
-    sudo systemctl daemon-reload
-    sudo systemctl enable bitburrow
-    sudo systemctl start bitburrow
-    ```
-1. Verify:
-    * Reboot (normally `sudo reboot`), wait for system to come back up, and sign in again.
-    * Check that the service is running: `sudo systemctl status bitburrow`
-    * If there are errors (e.g. `code=exited, status=3`), use `journalctl -u bitburrow` to help diagnose.
-
-### Set up BIND nameserver
-
-In the steps below, replace `rxb.example.org` with your BitBurrow hub domain name and `example.org` with the parent domain. Also, replace `1.2.3.4` with the public IP address of your BitBurrow hub host machine.
-
-All of these should be run inside the container.
-
-1. Forward DNS from internet (run on host):
-    ```
-    VMNAME=bitburrow
-    lxc config device add $VMNAME udpdns proxy listen=udp:1.2.3.4:53 connect=udp:127.0.0.1:53
-    lxc config device add $VMNAME tcpdns proxy listen=tcp:1.2.3.4:53 connect=tcp:127.0.0.1:53
-    ```
-1. Install: `sudo apt install -y bind9`
-1. Test recursive DNS look-ups via `dig @127.0.0.1 google.com +short`--should give answers
-1. Edit `/etc/bind/named.conf.options` and after `listen-on-v6` line add: `recursion no;`
-1. Restart BIND (`sudo service bind9 restart`) and retest lookups (`dig @127.0.0.1 google.com +short`)--should give no answers
-1. Edit `/etc/bind/named.conf.local` and add:
-    ```
-    zone "rxb.example.org" {
-	    type master;
-	    file "/var/cache/bind/db.bitburrow";
-	    allow-transfer { none; };
-	    update-policy local;
-    };
-    ```
-1. Begin with a template: `sudo cp -i /etc/bind/db.local /var/cache/bind/db.bitburrow`
-1. Edit zone file `/var/cache/bind/db.bitburrow` (PROOF OF CONCEPT; [`CAA` record info](https://letsencrypt.org/docs/caa/); FIXME: support ACME-CAA: [Let's Encrypt now supports ACME-CAA](https://www.devever.net/~hl/acme-caa-live), [HN comments](https://news.ycombinator.com/item?id=34035148)):
-    ```
-    $TTL	500
-    @	IN	SOA	rxb.example.org. root.localhost. (
-			          5		; Serial
-			     604800		; Refresh
-			      86400		; Retry
-			    2419200		; Expire
-			    500 )	; Negative Cache TTL
-    ;
-    @	IN	NS	rxb.example.org.
-    @	IN	A	1.2.3.4
-    @	IN	CAA	0 issue "letsencrypt.org"
-    test	IN	A	192.168.10.1
-    test2	IN	CNAME	test
-    ```
-1. Fix permissions:
-    ```
-    sudo chmod 644 /var/cache/bind/db.bitburrow
-    sudo chown bind:bind /var/cache/bind/db.bitburrow
-    ```
-1. Check config and restart BIND: `sudo named-checkconf && sudo service bind9 restart`
-1. Test dynamic updates (see that no errors are displayed): `printf "zone rxb.example.org\nupdate delete testa.rxb.example.org.\nupdate add testa.rxb.example.org. 600 IN A 11.11.11.11\nsend\n" |sudo -u bind /usr/bin/nsupdate -l`
+1. The above should display several lines beginning `Device`
 
 ### Make BitBurrow hub the authoritative name server
 
@@ -206,46 +110,13 @@ All of these should be run inside the container.
 	rxb.example.org. 86400 IN NS rxb.example.org.
 	rxb.example.org. 3600 IN A 1.2.3.4
 	```
-1. From a computer elsewhere on the internet, test your DNS server: `dig testa.rxb.example.org`--should display `11.11.11.11`
 
-### Request Let's Encrypt wildcard TLS certificate:
+### Finish installing BitBurrow hub
 
-All of these should be run inside the container.
-
-1. Install Certbot: `sudo snap install --classic certbot`
-1. Create `/opt/certbot_hook.sh`:
+1. Run Ansible again (run inside container):
     ```
-    #!/bin/bash
-    DNS_ZONE=
-    HOST='_acme-challenge'
-    sudo -u bind /usr/bin/nsupdate -l << EOM
-    zone ${DNS_ZONE}
-    update delete ${HOST}.${CERTBOT_DOMAIN} A
-    update add ${HOST}.${CERTBOT_DOMAIN} 300 TXT "${CERTBOT_VALIDATION}"
-    send
-    EOM
-    sleep 5
-    ```
-1. Fix permissions:
-    ```
-    sudo chown bind:bind /opt/certbot_hook.sh
-    sudo chmod 550 /opt/certbot_hook.sh
-    ```
-1. Run Certbot:
-    ```
-    DNS_ZONE=rxb.example.org
-    sudo perl -p -i -e "s|^DNS_ZONE[ =].*|DNS_ZONE=$DNS_ZONE|;" /opt/certbot_hook.sh
-    sudo certbot certonly --agree-tos --manual --preferred-challenge=dns --manual-auth-hook=/opt/certbot_hook.sh --register-unsafely-without-email --manual-public-ip-logging-ok -d '*.'$DNS_ZONE -d $DNS_ZONE --server https://acme-v02.api.letsencrypt.org/directory
-    sudo systemctl list-timers snap.certbot.renew.timer  # FYI
-    ```
-1. If you make any BIND or DNS changes in the future, verify the renewal process (optional):
-    ```
-    sudo certbot renew --dry-run
-    ```
-1. Allow BitBurrow hub access to files for https:
-    ```
-    sudo apt install -y acl
-    sudo setfacl -Rm d:user:bitburrow:rx,user:bitburrow:rx /etc/letsencrypt/
+    cd ~/hub
+    ansible-playbook -i localhost, install.yaml
     ```
 
 ### Configure ssh directly to container (optional)
