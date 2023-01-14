@@ -65,8 +65,6 @@ This section is recommended but not required. A container helps with security by
 
 ### Install BitBurrow hub
 
-In the third step below, replace `rxb.example.org` with your BitBurrow hub domain name and replace `1.2.3.4` with the public IP address of your BitBurrow hub host machine.
-
 1. Enable `ssh localhost` (run inside container):
     ```
     mkdir -p ~/.ssh/
@@ -82,16 +80,11 @@ In the third step below, replace `rxb.example.org` with your BitBurrow hub domai
     mkdir -p ~/hub && cd $_
     wget https://raw.githubusercontent.com/BitBurrow/BitBurrow/main/src/hub_installer/install.yaml
     ```
-1. Set your domain name and IP (run inside container):
+1. Run Ansible (replace `rxb.example.org` with your BitBurrow hub domain name and replace `1.2.3.4` with the public IP address of your BitBurrow hub host machine; if you are using a container, this will fail but that's okay at this point; run inside container):
     ```
-    sudo -u bitburrow /home/bitburrow/.local/bin/bbhub --create-admin-account
-    DOMAIN=rxb.example.org
-    IP=1.2.3.4
+    ansible-playbook -i localhost, install.yaml --extra-vars "domain=rxb.example.org ip=1.2.3.4"
     ```
-1. Run Ansible--this will fail if you are using a container but that's okay at this point (run inside container):
-    ```
-    ansible-playbook -i localhost, install.yaml --extra-vars "domain=$DOMAIN ip=$IP"
-    ```
+1. If the script fails prior to the `run certbot` step, resolve whatever caused the failure (the `debugging` tips in the script itself may be useful) and rerun the above `ansible-playbook` line
 
 ### Forward ports to the container
 
@@ -105,11 +98,12 @@ In the third step below, replace `rxb.example.org` with your BitBurrow hub domai
 
 ### Make BitBurrow hub the authoritative name server
 
-1. Configure the nameserver for example.org (usually done through the website of your domain name registrar), add an NS record for rxb.example.org which points to rxb.example.org. (This tells the internet that rxb.example.org is the authoritative nameserver for *.rxb.example.org.) Then, add an A record for rxb.example.org which points to rxb.example.org (this is called a "glue record"; [more info](https://en.wikipedia.org/wiki/Domain_Name_System#Circular_dependencies_and_glue_records)). Here is a partial zone file for example.org which represents these two records:
+1. **Do this only if you have a new subdomain of an existing domain for your organization or company.** Configure the nameserver for `example.org` (usually done through the website of your domain name registrar) to have two additional records. Substitute `rxb.example.org` with your domain. First, add an NS record (short for name server) for `rxb.example.org` which points to `rxb.example.org`. This tells the internet that `rxb.example.org` (your BitBurrow hub) is the authoritative nameserver for all of it's subdomains, e.g. `foxes.rxb.example.org`. Use the default TTL value. Second, add an A record for `rxb.example.org` which points to the IP address of your host. This is called a "glue record" ([more info](https://en.wikipedia.org/wiki/Domain_Name_System#Circular_dependencies_and_glue_records)). Here is a partial zone file for `example.org` which represents these two records:
 	```
 	rxb.example.org. 86400 IN NS rxb.example.org.
 	rxb.example.org. 3600 IN A 1.2.3.4
 	```
+1. **Do this only if you have a domain exclusively for BitBurrow hub.** Configure `example.org` (usually done through the website of your domain name registrar) to have it's NS (name server) records point to the IP address of your BitBurrow hub. This tells the internet that `example.org` (your BitBurrow hub) is the authoritative nameserver for all of it's subdomains, e.g. `foxes.example.org`.
 
 ### Finish installing BitBurrow hub
 
