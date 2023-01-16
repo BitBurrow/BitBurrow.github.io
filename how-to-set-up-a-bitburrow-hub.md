@@ -80,11 +80,11 @@ This section is recommended but not required. A container helps with security by
     mkdir -p ~/hub && cd $_
     wget https://raw.githubusercontent.com/BitBurrow/BitBurrow/main/src/hub_installer/install.yaml
     ```
-1. Run Ansible (replace `rxb.example.org` with your BitBurrow hub domain name and replace `1.2.3.4` with the public IP address of your BitBurrow hub host machine; if you are using a container, this will fail but that's okay at this point; run inside container):
+1. Run Ansible (replace `rxb.example.org` with your BitBurrow hub domain name and replace `1.2.3.4` with the public IP address of your BitBurrow hub host machine; if you are using a container, this will fail at `Test BIND and DNS config` but that's okay at this point; run inside container):
     ```
     ansible-playbook -i localhost, install.yaml --extra-vars "domain=rxb.example.org ip=1.2.3.4"
     ```
-1. If the script fails prior to the `run certbot` step, resolve whatever caused the failure (the `debugging` tips in the script itself may be useful) and rerun the above `ansible-playbook` line
+1. If the script fails prior to the `Test BIND and DNS config` step, resolve whatever caused the failure (the `debugging` tips in the script itself may be useful) and rerun the above `ansible-playbook` line
 
 ### Forward ports to the container
 
