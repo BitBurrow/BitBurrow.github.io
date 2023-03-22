@@ -65,23 +65,14 @@ This section is recommended but not required. A container helps with security by
 
 ### Install BitBurrow hub
 
-1. Enable `ssh localhost` (run inside container):
+1. Download the installer (run inside container):
     ```
-    mkdir -p ~/.ssh/
-    ssh-keygen -q -f ~/.ssh/id_ed25519 -N '' -t ed25519
-    cat ~/.ssh/id_ed25519.pub >>~/.ssh/authorized_keys
-    echo "* $(cat /etc/ssh/ssh_host_ecdsa_key.pub)" >>~/.ssh/known_hosts
-    chmod go-w ~ ~/.ssh; chmod ugo-x,go-w ~/.ssh/authorized_keys
-    ```
-1. Install dependencies (run inside container):
-    ```
-    sudo apt update
-    sudo apt install -y wget ansible
-    mkdir -p ~/hub && cd $_
-    wget https://raw.githubusercontent.com/BitBurrow/BitBurrow/main/src/hub_installer/install.yaml
+    wget https://raw.githubusercontent.com/BitBurrow/BitBurrow/main/hub_installer/preinstall.sh
+    sudo bash preinstall.sh
     ```
 1. Run Ansible (replace `rxb.example.org` with your BitBurrow hub domain name and replace `1.2.3.4` with the public IP address of your BitBurrow hub host machine; if you are using a container, this will fail at `Test BIND and DNS config` but that's okay at this point; run inside container):
     ```
+    cd ~/hub
     ansible-playbook -i localhost, install.yaml --extra-vars "domain=rxb.example.org ip=1.2.3.4"
     ```
 1. If the script fails prior to the `Test BIND and DNS config` step, resolve whatever caused the failure (the `debugging` tips in the script itself may be useful) and rerun the above `ansible-playbook` line
