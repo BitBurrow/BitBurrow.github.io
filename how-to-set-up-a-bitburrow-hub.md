@@ -122,7 +122,7 @@ This assumes `authorized_keys` on the host is already configured for public-key 
     ```
     VMNAME=bitburrow
     lxc exec $VMNAME -- apt install -y ssh
-    cat ~/.ssh/authorized_keys |lxc exec $VMNAME -- sudo -u bitburrow bash -c 'cd; mkdir -p .ssh; cat - >> ~/.ssh/authorized_keys; chmod go-w . .ssh; chmod ugo-x,go-w .ssh/authorized_keys'
+    cat ~/.ssh/authorized_keys |lxc exec $VMNAME -- sudo -u ubuntu bash -c 'cd; mkdir -p .ssh; cat - >> ~/.ssh/authorized_keys; chmod go-w . .ssh; chmod ugo-x,go-w .ssh/authorized_keys'
     lxc config device add $VMNAME ssh proxy listen=tcp:0.0.0.0:18962 connect=tcp:127.0.0.1:22
     ```
 1. On your personal computer, edit `~/.ssh/config` and add:
@@ -130,7 +130,7 @@ This assumes `authorized_keys` on the host is already configured for public-key 
     Host bitburrow
         HostName rxb.example.org
         Port 18962
-        User bitburrow
+        User ubuntu
     ```
 
 ### Create a BitBurrow hub administrator account and coupon code
