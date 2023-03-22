@@ -63,7 +63,7 @@ After these steps, you should have a command prompt *in* the container.
 
 ### Install BitBurrow hub
 
-In the commands below, replace `rxb.example.org` with your BitBurrow hub domain name and replace `1.2.3.4` with the public IP address of your BitBurrow hub host machine. In most cases, the `ansible-playbook` command will fail at `Test BIND and DNS config` the first time it is run. This is normal.
+In the commands below, replace `rxb.example.org` with your BitBurrow hub domain name and replace `1.2.3.4` with the public IP address of your BitBurrow hub host machine. At the `BECOME password` prompt (after the `ansible-playbook` command), enter your `sudo` password, or just press enter if there isn't one, which is the default for `lxc`. In most cases, the `ansible-playbook` command will fail at `Test BIND and DNS config` the first time it is run. This is normal.
 
 1. Download the installer (run inside container):
     ```
@@ -73,7 +73,7 @@ In the commands below, replace `rxb.example.org` with your BitBurrow hub domain 
 1. Run Ansible (run inside container):
     ```
     cd ~/hub
-    ansible-playbook -i localhost, install.yaml --extra-vars "domain=rxb.example.org ip=1.2.3.4"
+    ansible-playbook -i localhost, --ask-become-pass install.yaml --extra-vars "domain=rxb.example.org ip=1.2.3.4"
     ```
 1. If the script fails *prior* to the `Test BIND and DNS config` step, resolve whatever caused the failure (the `debugging` tips in `install.yaml` may be useful) and rerun the above `ansible-playbook` line
 
@@ -108,7 +108,7 @@ Skip this section if you are not using a container.
 1. Run Ansible again (run inside container):
     ```
     cd ~/hub
-    ansible-playbook -i localhost, install.yaml
+    ansible-playbook -i localhost, --ask-become-pass install.yaml
     ```
 1. If the script fails, resolve whatever caused the failure (the `debugging` tips in `install.yaml` may be useful) and rerun the above `ansible-playbook` line
 
