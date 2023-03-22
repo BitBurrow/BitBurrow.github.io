@@ -16,7 +16,7 @@ BitBurrow has two major components--an app and a hub. ...
 
 1. Some background in Linux system administration and working on the command line.
 1. A Linux server with a fixed, public IPv4 address, e.g. from [DigitalOcean](https://www.digitalocean.com/), [Linode](https://www.linode.com/), or other VPS provider. BitBurrow can share the server with other services so long as TCP ports 53 and 8443, and UDP port 53 are available.
-1. A domain or subdomain name with the ability to host your own DNS (i.e. add an NS record for the subdomain).
+1. A domain or subdomain name with the ability to host your own DNS (i.e. add an NS record for the subdomain). The nameserver service provided by some domain name registrars does not allow adding NS records for subdomains. This was true of Hover as of March, 2023. To work around this, yuu will need to use a different nameserver service, such as DigitalOcean, for the entire domain.
 1. Time to manage a public server long-term.
 
 ## Steps
