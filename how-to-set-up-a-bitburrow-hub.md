@@ -23,7 +23,7 @@ BitBurrow has two major components--an app and a hub. ...
 
 ### Acquire a domain name
 
-Purchase your new domain name from a [domain name registrar](https://en.wikipedia.org/wiki/Domain_name_registrar) such as [Hover](https://www.hover.com/) or [Google Domains](https://domains.google/). Alternatively, create a new subdomain for an existing domain such as your company or organization. For example, if your organization owns `example.org`, you could set up `rxb.example.org` to use for BitBurrow, where `rxb` is a subdomain you choose.
+Purchase your new domain name from a [domain name registrar](https://en.wikipedia.org/wiki/Domain_name_registrar) such as [Hover](https://www.hover.com/) or [Google Domains](https://domains.google/). Alternatively, create a new subdomain for an existing domain such as your company or organization. For example, if your organization owns `example.org`, you could set up `vxm.example.org` to use for BitBurrow, where `vxm` is a subdomain you choose.
 
 When choosing a domain name or subdomain, it is recommended that it *not* contain `vpn`, `proxy`, `bitburrow`, `gateway`, or similar words. Public WiFi networks that restrict VPN usage may block domain names that include these. Also, choosing a name that is easy to type will make it easier for admins setting up VPN servers.
 
@@ -63,19 +63,20 @@ After these steps, you should have a command prompt *in* the container.
 
 ### Install BitBurrow hub
 
-In the commands below, replace `rxb.example.org` with your BitBurrow hub domain name and replace `1.2.3.4` with the public IP address of your BitBurrow hub host machine. At the `BECOME password` prompt (after the `ansible-playbook` command), enter your `sudo` password, or just press enter if there isn't one, which is the default for `lxc`. In most cases, the `ansible-playbook` command will fail at `Test BIND and DNS config` the first time it is run. This is normal.
+In the commands below, replace `vxm.example.org` with your BitBurrow hub domain name and replace `1.2.3.4` with the public IP address of your BitBurrow hub host machine. At the `BECOME password` prompt (after the `ansible-playbook` command), enter your `sudo` password, or just press enter if there isn't one, which is the default for `lxc`. In most cases, the `ansible-playbook` command will fail at `Test BIND and DNS config` the first time it is run. This is normal.
 
 1. Download the installer (run inside container):
     ```
     wget https://raw.githubusercontent.com/BitBurrow/BitBurrow/main/hub_installer/preinstall.sh
     sudo bash preinstall.sh
     ```
-1. Run Ansible (run inside container):
+1. Run Ansible (run inside container; remember above-mentioned replacements):
     ```
     cd ~/hub
-    ansible-playbook -i localhost, --ask-become-pass install.yaml --extra-vars "domain=rxb.example.org ip=1.2.3.4"
+    ansible-playbook -i localhost, install.yaml --extra-vars "domain=vxm.example.org ip=1.2.3.4"
     ```
-1. If the script fails *prior* to the `Test BIND and DNS config` step, resolve whatever caused the failure (the `debugging` tips in `install.yaml` may be useful) and rerun the above `ansible-playbook` line
+1. If the script fails with "Missing sudo password", run it again with `--ask-become-pass ` before `install.yaml`.
+1. If the script fails for any other reason *prior* to the `Test BIND and DNS config` step, resolve whatever caused the failure (the `debugging` tips in `install.yaml` may be useful) and rerun the above `ansible-playbook` line
 
 ### Forward ports to the container
 
@@ -96,10 +97,10 @@ Skip this section if you are not using a container.
 
 ### Make BitBurrow hub the authoritative name server
 
-1. **Do this only if you have a new subdomain of an existing domain for your organization or company.** Configure the nameserver for `example.org` (usually done through the website of your domain name registrar) to have two additional records. Substitute `rxb.example.org` with your domain. First, add an NS record (short for name server) for `rxb.example.org` which points to `rxb.example.org`. This tells the internet that `rxb.example.org` (your BitBurrow hub) is the authoritative nameserver for all of it's subdomains, e.g. `foxes.rxb.example.org`. Use the default TTL value. Second, add an A record for `rxb.example.org` which points to the IP address of your host. This is called a "glue record" ([more info](https://en.wikipedia.org/wiki/Domain_Name_System#Circular_dependencies_and_glue_records)). Here is a partial zone file for `example.org` which represents these two records:
+1. **Do this only if you have a new subdomain of an existing domain for your organization or company.** Configure the nameserver for `example.org` (usually done through the website of your domain name registrar) to have two additional records. Substitute `vxm.example.org` with your domain. First, add an NS record (short for name server) for `vxm.example.org` which points to `vxm.example.org`. This tells the internet that `vxm.example.org` (your BitBurrow hub) is the authoritative nameserver for all of it's subdomains, e.g. `foxes.vxm.example.org`. Use the default TTL value. Second, add an A record for `vxm.example.org` which points to the IP address of your host. This is called a "glue record" ([more info](https://en.wikipedia.org/wiki/Domain_Name_System#Circular_dependencies_and_glue_records)). Here is a partial zone file for `example.org` which represents these two records:
 	```
-	rxb.example.org. 86400 IN NS rxb.example.org.
-	rxb.example.org. 3600 IN A 1.2.3.4
+	vxm.example.org. 86400 IN NS vxm.example.org.
+	vxm.example.org. 3600 IN A 1.2.3.4
 	```
 1. **Do this only if you have a domain exclusively for BitBurrow hub.** Configure `example.org` (usually done through the website of your domain name registrar) to have it's NS (name server) records point to the IP address of your BitBurrow hub. This tells the internet that `example.org` (your BitBurrow hub) is the authoritative nameserver for all of it's subdomains, e.g. `foxes.example.org`.
 
@@ -108,13 +109,14 @@ Skip this section if you are not using a container.
 1. Run Ansible again (run inside container):
     ```
     cd ~/hub
-    ansible-playbook -i localhost, --ask-become-pass install.yaml
+    ansible-playbook -i localhost, install.yaml
     ```
-1. If the script fails, resolve whatever caused the failure (the `debugging` tips in `install.yaml` may be useful) and rerun the above `ansible-playbook` line
+1. If the script fails with "Missing sudo password", run it again with `--ask-become-pass ` before `install.yaml`.
+1. If the script fails for another reason, resolve whatever caused the failure (the `debugging` tips in `install.yaml` may be useful) and rerun the above `ansible-playbook` line
 
 ### Configure ssh directly to container (optional)
 
-In the steps below, replace `rxb.example.org` with your BitBurrow hub domain and `18962` with a port number of your choosing.
+In the steps below, replace `vxm.example.org` with your BitBurrow hub domain and `18962` with a port number of your choosing.
 
 This assumes `authorized_keys` on the host is already configured for public-key ssh authentication.
 
@@ -128,7 +130,7 @@ This assumes `authorized_keys` on the host is already configured for public-key 
 1. On your personal computer, edit `~/.ssh/config` and add:
     ```
     Host bitburrow
-        HostName rxb.example.org
+        HostName vxm.example.org
         Port 18962
         User ubuntu
     ```
@@ -146,3 +148,10 @@ This assumes `authorized_keys` on the host is already configured for public-key 
     ```
 1. Write down this coupon. It is what you will distribute to others to set up their own VPN server.
 
+### Restart the container and test
+
+1. Reboot (run inside the container):
+    ```
+    sudo reboot
+    ```
+1. Test a connection from the client app
