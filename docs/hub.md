@@ -1,5 +1,5 @@
 ---
-title: How to set up your own BitBurrow hub
+title: How to set up a BitBurrow hub
 ---
 
 ## NOTE: THIS SOFTWARE DOES NOT EXIST YET
@@ -8,9 +8,7 @@ Everything below is proposed draft documentation. The software to do what is des
 
 ## Introduction
 
-BitBurrow is a set of tools to help you set up and use a VPN server anywhere--at your parents' house, an office, or a friend's apartment.
-
-BitBurrow has two major components--an app and a hub. ...
+This page will help you set up a BitBurrow hub. For an introduction, see [BitBurrow overview](index.md).
 
 ## What you will need
 
