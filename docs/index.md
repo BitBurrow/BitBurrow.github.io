@@ -2,6 +2,55 @@
 title: BitBurrow overview
 ---
 
+Test icons outside of Mermaid:
+
+1. :smile: `:smile:`
+1. :material-server: `:material-server:`
+1. fa:fa-mobile-alt `fa:fa-mobile-alt`
+1. :fa-regular-moon: `:fa-regular-moon:` (file `docs/assets/.icons/fa/regular/moon.svg`)
+1. :fontawesome-regular-moon: `:fontawesome-regular-moon:`
+1. :regular-moon: `:regular-moon:`
+1. :material-account-circle: `:material-account-circle:`
+1. :fa-regular-face-laugh-wink: `:fa-regular-face-laugh-wink:`
+
+Test icons **in** Mermaid:
+
+```mermaid
+flowchart LR
+    M(:smile:) --> A(A)
+    N(:material-server:) --> A(A)
+    O(fa:fa-mobile-alt) --> A(A)
+    P(:fa-regular-moon:) --> A(A)
+    Q(:fontawesome-regular-moon:) --> A(A)
+    R(:regular-moon:) --> A(A)
+    S(:material-account-circle:) --> A(A)
+    T(:fa-regular-face-laugh-wink:) --> A(A)
+```
+
+```mermaid
+flowchart LR
+    M(":smile:") --> A(A)
+    N(":material-server:") --> A(A)
+    O("fa:fa-mobile-alt") --> A(A)
+    P(":fa-regular-moon:") --> A(A)
+    Q(":fontawesome-regular-moon:") --> A(A)
+    R(":regular-moon:") --> A(A)
+    S(":material-account-circle:") --> A(A)
+    T(":fa-regular-face-laugh-wink:") --> A(A)
+```
+
+```mermaid
+flowchart LR
+    M("`:smile:`") --> A(A)
+    N("`:material-server:`") --> A(A)
+    O("`fa:fa-mobile-alt`") --> A(A)
+    P("`:fa-regular-moon:`") --> A(A)
+    Q("`:fontawesome-regular-moon:`") --> A(A)
+    R("`:regular-moon:`") --> A(A)
+    S("`:material-account-circle:`") --> A(A)
+    T("`:fa-regular-face-laugh-wink:`") --> A(A)
+```
+
 ## NOTE: THIS SOFTWARE DOES NOT EXIST YET
 
 *Everything below is proposed draft documentation. The software to do what is described is being developed and is not at all usable yet.*
