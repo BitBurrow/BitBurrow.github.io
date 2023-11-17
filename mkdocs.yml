@@ -17,10 +17,15 @@ theme:
       toggle:
         icon: material/toggle-switch-off-outline 
         name: Switch to dark mode
-    - scheme: slate 
+    - scheme: slate
       toggle:
         icon: material/toggle-switch
         name: Switch to light mode    
+  logo: assets/BitBurrow.png
+  favicon: assets/BitBurrow.png
+
+extra_css:
+  - assets/css/colors.css
 
 markdown_extensions:
   - pymdownx.highlight:
