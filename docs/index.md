@@ -35,32 +35,32 @@ flowchart BT
     %% flowchart docs: https://mermaid.js.org/syntax/flowchart.html
     %% available icons: https://fontawesome.com/v5/search?o=r&m=free
     subgraph secondHome["<b>second home</b>"]
-        remote[/"fa:fa-network-wired BitBurrow <b>remote</b>"\]
+        remote[/"<img src='fa/network-wired.svg' width=16 height=16/> BitBurrow <b>remote</b>"\]
     end
     subgraph coffeeShop["<b>coffee shop</b>"]
-        user1("fa:fa-laptop user device")
-        user2("fa:fa-mobile-alt user device")
+        user1("<img src='fa/laptop.svg' width=16 height=16/> user device")
+        user2("<img src='fa/mobile-screen-button.svg' width=16 height=16/> user device")
     end
     subgraph vpnHome["<b>VPN home</b>"]
-        base[/"fa:fa-network-wired BitBurrow <b>base</b>"\]
+        base[/"<img src='fa/network-wired.svg' width=16 height=16/> BitBurrow <b>base</b>"\]
         %%click base href "https://www.github.com" "BitBurrow base is ..." _blank
-        app("fa:fa-mobile-alt BitBurrow <b>app</b>")
+        app("<img src='fa/mobile-screen-button.svg' width=16 height=16/> BitBurrow <b>app</b>")
     end
     subgraph internet["<b>internet</b>"]
-        hub["fa:fa-server BitBurrow <b>hub</b>"]
-        resolver(fa:fa-server DNS resolver)
-        website["fa:fa-server website"]
+        hub["<img src='fa/server.svg' width=16 height=16/> BitBurrow <b>hub</b>"]
+        resolver(<img src='fa/server.svg' width=16 height=16/> DNS resolver)
+        website["<img src='fa/server.svg' width=16 height=16/> website"]
     end
     subgraph key["<b>key</b>"]
         direction LR
-        A(fa:fa-laptop)
-        B(fa:fa-server)
-        C(fa:fa-laptop)
-        D(fa:fa-server)
-        E(fa:fa-laptop)
-        F(fa:fa-server)
-        G(fa:fa-laptop)
-        H(fa:fa-server)
+        A("<img src='fa/laptop.svg' width=16 height=16/>")
+        B("<img src='fa/server.svg' width=16 height=16/>")
+        C("<img src='fa/laptop.svg' width=16 height=16/>")
+        D("<img src='fa/server.svg' width=16 height=16/>")
+        E("<img src='fa/laptop.svg' width=16 height=16/>")
+        F("<img src='fa/server.svg' width=16 height=16/>")
+        G("<img src='fa/laptop.svg' width=16 height=16/>")
+        H("<img src='fa/server.svg' width=16 height=16/>")
     end
     %% http or https
     A -->|"<span style='background-color:#ededed'>http/https</span>"| B
