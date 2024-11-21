@@ -65,6 +65,7 @@ In the commands below, replace `vxm.example.org` with your BitBurrow hub domain 
 
 1. Download the installer (run inside container):
     ```
+    rm -f preinstall.sh
     wget https://raw.githubusercontent.com/BitBurrow/BitBurrow/main/hub_installer/preinstall.sh
     sudo bash preinstall.sh
     ```
