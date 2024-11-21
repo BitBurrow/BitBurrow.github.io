@@ -138,12 +138,12 @@ This assumes `authorized_keys` on the host is already configured for public-key 
 
 1. Add the admin account (run inside container):
     ```
-    sudo -u bitburrow /home/bitburrow/.local/bin/bbhub --create-admin-account
+    sudo -u bitburrow /home/bitburrow/bitburrow/.venv/bin/bbhub --create-admin-account
     ```
 1. Write down this login key in a safe place. It is effectively the master username and password for this BitBurrow hub.
 1. Create a coupon code (run inside container):
     ```
-    sudo -u bitburrow /home/bitburrow/.local/bin/bbhub --create-coupon-code
+    sudo -u bitburrow /home/bitburrow/bitburrow/.venv/bin/bbhub --create-coupon-code
     ```
 1. Write down this coupon. It is what you will distribute to others to set up their own VPN server.
 
