@@ -19,7 +19,7 @@ BitBurrow includes four main components:
 * BitBurrow **base** is a router at your VPN home that functions as a VPN server. It accepts VPN connections from user devices and forwards them to the internet. See [How to set up a BitBurrow base](base.md).
 * BitBurrow **app** runs on Android or iOS and, together with the hub, is used to configure a BitBurrow base.
 * BitBurrow **hub** runs on a server on the public internet. It serves to configure a BitBurrow base and also DNS requests from user devices. See [How to set up a BitBurrow hub](hub.md).
-* BitBurrow **remote** is a router configured as a VPN client, allowing users at a secondary location to use the internet as if they were at the "VPN home" without any additional software.
+* BitBurrow **outpost** is a router configured as a VPN client, allowing users at a secondary location to use the internet as if they were at the "VPN home" without any additional software.
 
 Here is a visual representation.
 
@@ -35,7 +35,7 @@ flowchart BT
     %% flowchart docs: https://mermaid.js.org/syntax/flowchart.html
     %% available icons: https://fontawesome.com/v5/search?o=r&m=free
     subgraph secondHome["<b>second home</b>"]
-        remote[/"<img src='fa/network-wired.svg' width=16 height=16/> BitBurrow <b>remote</b>"\]
+        outpost[/"<img src='fa/network-wired.svg' width=16 height=16/> BitBurrow <b>outpost</b>"\]
     end
     subgraph coffeeShop["<b>coffee shop</b>"]
         user1("<img src='fa/laptop.svg' width=16 height=16/> user device")
@@ -74,13 +74,13 @@ flowchart BT
     linkStyle 4,5 stroke:red
     %% WireGuard connections (add '=' for longer connections)
     E ==>|"<span style='background-color:#ededed'>WireGuard</span>"| F
-    remote ===> base
+    outpost ===> base
     user1 ===> base
     user2 ===> base
     base ===> hub
     %% DNS connections (add '.' for longer connections)
     G -.->|"<span style='background-color:#ededed'>vxm.example.org DNS</span>"| H
-    remote -..-> resolver
+    outpost -..-> resolver
     user1 -..-> resolver
     user2 -..-> resolver
     resolver -.-> hub
