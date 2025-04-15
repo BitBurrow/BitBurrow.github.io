@@ -1,0 +1,11 @@
+/*
+ * FIXME:
+ *   Define on a color palette that goes with the logo.
+ *   See https://squidfunk.github.io/mkdocs-material/setup/changing-the-colors/#custom-colors
+ */
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color:        #79473c;
+}
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color:        #58342c;
+}
