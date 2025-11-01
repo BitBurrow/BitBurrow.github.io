@@ -202,11 +202,11 @@ The BitBurrow hub runs FastAPI via Uvicorn. See [Running Uvicorn programmaticall
 
 A Berror code, e.g. 'B46373', is a 'B' followed by a 5-digit unique number that the user can give the developer to quickly find a line of code. Every log entry and `raise` should have one. The pre-commit hook `git_hooks/pre-commit` verifies that Berror codes are unique. Generate a new one (which is *probably* unique) via:
 
-    ```
-    echo -n B; export LC_ALL=C; tr -dc 0-9 </dev/urandom |head -c 5; echo
-    ```
+```
+echo -n B; export LC_ALL=C; tr -dc 0-9 </dev/urandom |head -c 5; echo
+```
 
-You can also just make them up, but this method is much more likely to generate duplicates.
+You can also just make them up, but the above method is much less likely to generate duplicates.
 
 ### Coding conventions
 
