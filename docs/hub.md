@@ -154,3 +154,57 @@ This assumes `authorized_keys` on the host is already configured for public-key 
     sudo reboot
     ```
 1. Test a connection from the client app
+
+## Notes for developers
+
+### Overview
+
+The BitBurrow hub runs FastAPI via Uvicorn. See [Running Uvicorn programmatically](https://www.uvicorn.org/deployment/#running-programmatically) and how it is implemented it in `hub/hub.py`.
+
+### Set-up steps
+
+* set up a test server via [How to set up a BitBurrow hub](https://bitburrow.com/hub/)
+* (optional) fork the BitBurrow project on GitHub
+* clone the repo to your local computer
+    ```
+    cd /your/code/repo
+    mkdir bitburrow && cd $_
+    git clone https://github.com/BitBurrow/BitBurrow.git .  # or your BitBurrow fork
+    ```
+* configure the pre-commit hooks:
+    ```
+    git config core.hooksPath $(git rev-parse --show-toplevel)/git_hooks
+    ```
+* so we can all agree on code formatting, set up [Black](https://pypi.org/project/black/) in your code editor with the options `--line-length 100 --skip-string-normalization` (a pre-commit hook will warn you if `black --check ...` fails)
+* edit code
+
+### Testing your changes
+
+* stop the BitBurrow hub service on your_hub (as user ubuntu or root):
+    ```
+    sudo systemctl stop bitburrow
+    ```
+* copy your modified files to `~/bitburrow/` on your_hub via something similar to:
+    ```
+    rsync -av --delete --files-from <(git ls-files; git ls-files --others --exclude-standard) \
+        ./ bitburrow@your_hub:bitburrow/
+* reinstall:
+    ```
+    cd ~/bitburrow/
+    poetry install
+    ```
+* run BitBurrow hub in debug mode:
+    ```
+    bitburrow/.venv/bin/bbhub -vv serve
+    ```
+
+### Berror codes
+
+A Berror code, e.g. 'B46373', is a 'B' followed by a 5-digit unique number that the user can give the developer to quickly find a line of code. Every log entry and `raise` should have one. The pre-commit hook `git_hooks/pre-commit` verifies that Berror codes are unique. Generate a new one (which is *probably* unique) via `echo -n B; export LC_ALL=C; tr -dc 0-9 </dev/urandom |head -c 5; echo`. You can also just make them up, but this method is much more likely to generate duplicates.
+
+### Coding conventions
+
+* Black as mentioned above
+* Berror codes as mentioned above
+* Use double quotes for strings that should (at some point) be translated in the UI for i18n, single quotes otherwise.
+* Put methods above where they are called in the same file (where reasonable).
