@@ -188,6 +188,7 @@ The BitBurrow hub runs FastAPI via Uvicorn. See [Running Uvicorn programmaticall
     ```
     rsync -av --delete --files-from <(git ls-files; git ls-files --others --exclude-standard) \
         ./ bitburrow@your_hub:bitburrow/
+    ```
 * reinstall:
     ```
     cd ~/bitburrow/
