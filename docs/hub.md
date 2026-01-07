@@ -25,6 +25,17 @@ Purchase your new domain name from a [domain name registrar](https://en.wikipedi
 
 When choosing a domain name or subdomain, it is recommended that it *not* contain `vpn`, `proxy`, `bitburrow`, `gateway`, or similar words. Public WiFi networks that restrict VPN usage may block domain names that include these. Also, choosing a name that is easy to type will make it easier for admins setting up VPN servers.
 
+### Make BitBurrow hub the authoritative name server
+
+In the instructions below, `YOUR_HUB_DOMAIN` is the BitBurrow hub domain name, e.g. `vxm.example.org` or `example.org`, and `YOUR_HUB_IP` is the primary public IP address of your BitBurrow hub (if you don't know, try `wget -q -O- api.bigdatacloud.net/data/client-ip |grep ipString |grep -Eo [0-9\.]+`).
+
+1. **Do this only if you have a new subdomain of an existing domain for your organization or company.** Configure the nameserver for `YOUR_PARENT_DOMAIN` (e.g. `example.org`) to have two additional records. This is usually done through the website of your domain name registrar. First, add an NS record (short for name server) for `YOUR_HUB_DOMAIN` which points to `YOUR_HUB_DOMAIN`. This tells the internet that `YOUR_HUB_DOMAIN` (e.g. `vxm.example.org`) is the authoritative nameserver for all of it's subdomains, e.g. `foxes.vxm.example.org`. Use the default TTL value. Second, add an A record for `YOUR_HUB_DOMAIN` which points to the IP address of your host. This is called a "glue record" ([more info](https://en.wikipedia.org/wiki/Domain_Name_System#Circular_dependencies_and_glue_records)). Here is a partial zone file for `example.org` which represents these two records:
+	```
+	vxm.example.org. 86400 IN NS vxm.example.org.
+	vxm.example.org. 3600 IN A 1.2.3.4
+	```
+1. **Do this only if you have a domain exclusively for BitBurrow hub.** Configure `example.org` (usually done through the website of your domain name registrar) to have it's NS (name server) records point to the IP address of your BitBurrow hub. This tells the internet that `example.org` (your BitBurrow hub) is the authoritative nameserver for all of it's subdomains, e.g. `foxes.example.org`.
+
 ### Set up the Linux server
 
 These instructions are written for Ubuntu. If you are setting up a new server, use the most recent Ubuntu LTS server image.
@@ -39,9 +50,7 @@ These instructions are written for Ubuntu. If you are setting up a new server, u
 
 ### Create a container
 
-This section is recommended but not required. A container helps with security by isolating BitBurrow hub from other applications running on the same server, provides a firewall from the internet, and allows the hub to run processes as root without actually being root. Additionally, to simplify the installation process below, you can run Ubuntu inside the container even if the host uses another Linux flavor.
-
-After these steps, you should have a command prompt *in* the container.
+A container helps with security by isolating BitBurrow hub from other applications running on the same server, provides a firewall from the internet, and allows the hub to run processes as root without actually being root. Additionally, to simplify the installation process below, you can run Ubuntu inside the container even if the host uses another Linux flavor.
 
 1. Install LXD:
     ```
@@ -52,114 +61,60 @@ After these steps, you should have a command prompt *in* the container.
     lxd init
     lxd init --auto --storage-backend=btrfs --storage-create-loop=10
     ```
-1. Create a new container and connect to it:
+1. Create a new container and make aliases to run commands in it. To make future management easier, add these three 'alias' lines to your `.bashrc` or similar file. Replace `YOUR_LXC_NAME` with something to identify the container, e.g. `bitburrow` or your subdomain.
     ```
-    VMNAME=bitburrow  # 'bitburrow' is the name of the new container (change it if you like)
-    lxc launch ubuntu: $VMNAME
-    lxc exec $VMNAME -- sudo -u ubuntu -i  # if this fails, wait 20 seconds and try again
+    lxc launch ubuntu: YOUR_LXC_NAME
+    alias bbsetup="lxc exec YOUR_LXC_NAME -- sudo -u ubuntu -i"
+    alias bbadmin="lxc exec YOUR_LXC_NAME -- sudo -u bitburrow -i"
+    alias bbhub="lxc exec YOUR_LXC_NAME -- sudo -u bitburrow -i /home/bitburrow/bitburrow/.venv/bin/bbhub"
     ```
 
 ### Install BitBurrow hub
 
-In the commands below, replace `vxm.example.org` with your BitBurrow hub domain name and replace `1.2.3.4` with the public IP address of your BitBurrow hub host machine. At the `BECOME password` prompt (after the `ansible-playbook` command), enter your `sudo` password, or just press enter if there isn't one, which is the default for `lxc`. In most cases, the `ansible-playbook` command will fail at `Test BIND and DNS config` the first time it is run. This is normal.
-
-1. Download the installer (run inside container):
+1. Download and run the installer. If the script fails, comments within the script may be helpful. It is safe to rerun `preinstall.sh`. If the script fails with "Missing sudo password", run `bbsetup nano preinstall.sh` (substitute `vi` for `nano` if you like), insert ` --ask-become-pass` after `ansible-playbook`, and run `preinstall.sh` again.
     ```
-    rm -f preinstall.sh
-    wget https://raw.githubusercontent.com/BitBurrow/BitBurrow/main/hub_installer/preinstall.sh
-    sudo bash preinstall.sh
+    bbsetup wget https://raw.githubusercontent.com/BitBurrow/BitBurrow/main/hub_installer/preinstall.sh
+    bbsetup sudo bash preinstall.sh  YOUR_HUB_DOMAIN  YOUR_HUB_IP
     ```
-1. Run Ansible (run inside container; remember above-mentioned replacements):
+1. Configure. When editing `config.yaml`, note that the `help` section at the top is documentation; edit the data near the bottom to match your set-up.
     ```
-    cd ~/hub
-    ansible-playbook -i localhost, install.yaml --extra-vars "domain=vxm.example.org ip=1.2.3.4"
+    bbadmin nano .config/bitburrow/config.yaml
     ```
-1. If the script fails with "Missing sudo password", run it again with `--ask-become-pass ` before `install.yaml`.
-1. If the script fails for any other reason *prior* to the `Test BIND and DNS config` step, resolve whatever caused the failure (the `debugging` tips in `install.yaml` may be useful) and rerun the above `ansible-playbook` line
-
-### Forward ports to the container
-
-Skip this section if you are not using a container.
-
-1. Type `exit` and enter to exit the container.
-1. Download and run the script generated above (run on host):
+1. Forward ports to the container. If the public-facing IP is not on the computer hosting the LXC, before running it, you will need to edit `/tmp/pfscript`, replace every occurrence of the public IP with the host's internet-facing IP, and forward those ports from the public-facing router.
     ```
-    VMNAME=bitburrow  # use the same name you used for this above
-    lxc file pull $VMNAME/home/bitburrow/set_port_forwarding.sh /tmp/set_port_forwarding.sh
-    /tmp/set_port_forwarding.sh
+    bbhub port-forward-script >/tmp/pfscript
+    bash /tmp/pfscript
     ```
-1. The above should display several lines beginning `Device`
-1. Connect to the container again (run on host):
+1. Test. Rerun this until all tests pass. The most common problem is the configuration at the domain name registrar. If possible, download a zone file and compare it to the 2-line example above.
     ```
-    lxc exec $VMNAME -- sudo -u ubuntu -i
-    ```
-
-### Make BitBurrow hub the authoritative name server
-
-1. **Do this only if you have a new subdomain of an existing domain for your organization or company.** Configure the nameserver for `example.org` (usually done through the website of your domain name registrar) to have two additional records. Substitute `vxm.example.org` with your domain. First, add an NS record (short for name server) for `vxm.example.org` which points to `vxm.example.org`. This tells the internet that `vxm.example.org` (your BitBurrow hub) is the authoritative nameserver for all of it's subdomains, e.g. `foxes.vxm.example.org`. Use the default TTL value. Second, add an A record for `vxm.example.org` which points to the IP address of your host. This is called a "glue record" ([more info](https://en.wikipedia.org/wiki/Domain_Name_System#Circular_dependencies_and_glue_records)). Here is a partial zone file for `example.org` which represents these two records:
-	```
-	vxm.example.org. 86400 IN NS vxm.example.org.
-	vxm.example.org. 3600 IN A 1.2.3.4
-	```
-1. **Do this only if you have a domain exclusively for BitBurrow hub.** Configure `example.org` (usually done through the website of your domain name registrar) to have it's NS (name server) records point to the IP address of your BitBurrow hub. This tells the internet that `example.org` (your BitBurrow hub) is the authoritative nameserver for all of it's subdomains, e.g. `foxes.example.org`.
-
-### Finish installing BitBurrow hub
-
-1. Run Ansible again (run inside container):
-    ```
-    cd ~/hub
-    ansible-playbook -i localhost, install.yaml
-    ```
-1. If the script fails with "Missing sudo password", run it again with `--ask-become-pass ` before `install.yaml`.
-1. If the script fails for another reason, resolve whatever caused the failure (the `debugging` tips in `install.yaml` may be useful) and rerun the above `ansible-playbook` line
-
-### Configure ssh directly to container (optional)
-
-In the steps below, replace `vxm.example.org` with your BitBurrow hub domain and `18962` with a port number of your choosing.
-
-This assumes `authorized_keys` on the host is already configured for public-key ssh authentication.
-
-1. Set up ssh to container (run on host):
-    ```
-    VMNAME=bitburrow
-    lxc exec $VMNAME -- apt install -y ssh
-    cat ~/.ssh/authorized_keys |lxc exec $VMNAME -- sudo -u ubuntu bash -c 'cd; mkdir -p .ssh; cat - >> ~/.ssh/authorized_keys; chmod go-w . .ssh; chmod ugo-x,go-w .ssh/authorized_keys'
-    lxc config device add $VMNAME ssh proxy listen=tcp:0.0.0.0:18962 connect=tcp:127.0.0.1:22
-    ```
-1. On your personal computer, edit `~/.ssh/config` and add:
-    ```
-    Host bitburrow
-        HostName vxm.example.org
-        Port 18962
-        User ubuntu
+    bbhub test all
     ```
 
 ### Create a BitBurrow hub administrator account and coupon code
 
-1. Add the admin account (run inside container):
+1. Add an admin account:
     ```
-    sudo -u bitburrow /home/bitburrow/bitburrow/.venv/bin/bbhub --create-admin-account
+    bbhub -q create-admin-account
     ```
 1. Write down this login key in a safe place. It is effectively the master username and password for this BitBurrow hub.
 1. Create a coupon code (run inside container):
     ```
-    sudo -u bitburrow /home/bitburrow/bitburrow/.venv/bin/bbhub --create-coupon-code
+    bbhub -q create-coupon-code
     ```
 1. Write down this coupon. It is what you will distribute to others to set up their own VPN server.
 
 ### Restart the container and test
 
-1. Reboot (run inside the container):
+1. Reboot:
     ```
-    sudo reboot
+    bbsetup sudo reboot
     ```
-1. Test a connection from the client app
+1. You will probably need to configure and restart your reverse proxy service.
+1. Test a connection from the client app (`https://YOUR_HUB_DOMAIN/welcome`)
 
 ## Notes for developers
 
-### Overview
-
-The BitBurrow hub runs FastAPI via Uvicorn. See [Running Uvicorn programmatically](https://www.uvicorn.org/deployment/#running-programmatically) and how it is implemented it in `hub/hub.py`.
+The BitBurrow hub runs [NiceGUI](https://nicegui.io/), which uses FastAPI and Uvicorn.
 
 ### Set-up steps
 
@@ -215,3 +170,6 @@ You can also just make them up, but the above method is much less likely to gene
 * Berror codes as mentioned above
 * Use double quotes for strings that should (at some point) be translated in the UI for i18n, single quotes otherwise.
 * Put methods above where they are called in the same file (where reasonable).
+* Where there is embedded JavaScript, use two-space indent.
+* Don't include blank lines within methods except those already mandated by Black.
+
