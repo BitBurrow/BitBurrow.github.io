@@ -112,6 +112,16 @@ A container helps with security by isolating BitBurrow hub from other applicatio
 1. You will probably need to configure and restart your reverse proxy service.
 1. Test a connection from the client app (`https://YOUR_HUB_DOMAIN/welcome`)
 
+### Upgrade BitBurrow
+
+This will pull updates from GitHub, but it will also temporarily disrupt users who are using the server:
+    ```
+    bbsetup sudo systemctl stop bitburrow
+    bbadmin git -C bitburrow pull
+    bbadmin poetry --directory bitburrow install
+    bbsetup sudo systemctl start bitburrow
+    ```
+
 ## Notes for developers
 
 The BitBurrow hub runs [NiceGUI](https://nicegui.io/), which uses FastAPI and Uvicorn.
