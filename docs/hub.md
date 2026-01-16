@@ -71,10 +71,10 @@ A container helps with security by isolating BitBurrow hub from other applicatio
 
 ### Install BitBurrow hub
 
-1. Download and run the installer. If the script fails, comments within the script may be helpful. It is safe to rerun `preinstall.sh`. If the script fails with "Missing sudo password", run `bbsetup nano preinstall.sh` (substitute `vi` for `nano` if you like), insert ` --ask-become-pass` after `ansible-playbook`, and run `preinstall.sh` again.
+1. Download and run the installer. If the script fails, comments within the script may be helpful. It is safe to rerun `bbctl`. If the script fails with "Missing sudo password", run `bbsetup nano bbctl` (substitute `vi` for `nano` if you like), insert ` --ask-become-pass` after `ansible-playbook`, and run `bbctl` again.
     ```
-    bbsetup wget https://raw.githubusercontent.com/BitBurrow/BitBurrow/main/hub_installer/preinstall.sh
-    bbsetup sudo bash preinstall.sh  YOUR_HUB_DOMAIN  YOUR_HUB_IP
+    bbsetup wget https://raw.githubusercontent.com/BitBurrow/BitBurrow/main/hub_installer/bbctl
+    bbsetup sudo bash bbctl install YOUR_HUB_DOMAIN YOUR_HUB_IP
     ```
 1. Configure. When editing `config.yaml`, note that the `help` section at the top is documentation; edit the data near the bottom to match your set-up.
     ```
@@ -114,11 +114,11 @@ A container helps with security by isolating BitBurrow hub from other applicatio
 
 ### Upgrade BitBurrow
 
-This will pull updates from GitHub, but it will also temporarily disrupt users who are using the server:
+* Upgrade the hub and dependencies from GitHub; note that this will temporarily disrupt users who are using the server:
     ```
     bbsetup sudo systemctl stop bitburrow
-    bbadmin git -C bitburrow pull
-    bbadmin poetry --directory bitburrow install
+    bbsetup wget https://raw.githubusercontent.com/BitBurrow/BitBurrow/main/hub_installer/bbctl
+    bbsetup sudo bash bbctl upgrade
     bbsetup sudo systemctl start bitburrow
     ```
 
