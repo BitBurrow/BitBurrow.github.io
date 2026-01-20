@@ -117,7 +117,7 @@ A container helps with security by isolating BitBurrow hub from other applicatio
 * Upgrade the hub and dependencies from GitHub; note that this will temporarily disrupt users who are using the server:
     ```
     bbsetup sudo systemctl stop bitburrow
-    bbsetup wget https://raw.githubusercontent.com/BitBurrow/BitBurrow/main/hub_installer/bbctl
+    bbsetup wget -O bbctl https://raw.githubusercontent.com/BitBurrow/BitBurrow/main/hub_installer/bbctl
     bbsetup sudo bash bbctl upgrade
     bbsetup sudo systemctl start bitburrow
     ```
