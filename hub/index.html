@@ -1,0 +1,783 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../base/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/BitBurrow.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>How to set up a BitBurrow hub - BitBurrow</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/css/colors.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#note-this-software-does-not-exist-yet" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="BitBurrow" class="md-header__button md-logo" aria-label="BitBurrow" data-md-component="logo">
+      
+  <img src="../assets/BitBurrow.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            BitBurrow
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              How to set up a BitBurrow hub
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="BitBurrow" class="md-nav__button md-logo" aria-label="BitBurrow" data-md-component="logo">
+      
+  <img src="../assets/BitBurrow.png" alt="logo">
+
+    </a>
+    BitBurrow
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BitBurrow overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to set up a BitBurrow base
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to set up a BitBurrow hub
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to set up a BitBurrow hub
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#note-this-software-does-not-exist-yet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NOTE: THIS SOFTWARE DOES NOT EXIST YET
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Introduction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-you-will-need" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What you will need
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Steps
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Steps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#acquire-a-domain-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acquire a domain name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#make-bitburrow-hub-the-authoritative-name-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Make BitBurrow hub the authoritative name server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-up-the-linux-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Set up the Linux server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create a container
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-bitburrow-hub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Install BitBurrow hub
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-bitburrow-hub-administrator-account-and-coupon-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create a BitBurrow hub administrator account and coupon code
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restart-the-container-and-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restart the container and test
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrade-bitburrow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upgrade BitBurrow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes-for-developers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notes for developers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Notes for developers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-up-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Set-up steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-your-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing your changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#berror-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Berror codes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coding-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coding conventions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>How to set up a BitBurrow hub</h1>
+
+<h2 id="note-this-software-does-not-exist-yet">NOTE: THIS SOFTWARE DOES NOT EXIST YET</h2>
+<p>Everything below is proposed draft documentation. The software to do what is described is being developed and is not at all usable yet.</p>
+<h2 id="introduction">Introduction</h2>
+<p>This page will help you set up a BitBurrow hub. For an introduction, see <a href="../">BitBurrow overview</a>.</p>
+<h2 id="what-you-will-need">What you will need</h2>
+<ol>
+<li>Some background in Linux system administration and working on the command line.</li>
+<li>A Linux server with a fixed, public IPv4 address, e.g. from <a href="https://www.digitalocean.com/">DigitalOcean</a>, <a href="https://www.linode.com/">Linode</a>, or other VPS provider. BitBurrow can share the server with other services so long as TCP ports 53 and 8443, and UDP port 53 are available.</li>
+<li>A domain or subdomain name with the ability to host your own DNS (i.e. add an NS record for the subdomain). The nameserver service provided by some domain name registrars does not allow adding NS records for subdomains. This was true of Hover as of March, 2023. To work around this, yuu will need to use a different nameserver service, such as DigitalOcean, for the entire domain.</li>
+<li>Time to manage a public server long-term.</li>
+</ol>
+<h2 id="steps">Steps</h2>
+<h3 id="acquire-a-domain-name">Acquire a domain name</h3>
+<p>Purchase your new domain name from a <a href="https://en.wikipedia.org/wiki/Domain_name_registrar">domain name registrar</a> such as <a href="https://www.hover.com/">Hover</a> or <a href="https://domains.google/">Google Domains</a>. Alternatively, create a new subdomain for an existing domain such as your company or organization. For example, if your organization owns <code>example.org</code>, you could set up <code>vxm.example.org</code> to use for BitBurrow, where <code>vxm</code> is a subdomain you choose.</p>
+<p>When choosing a domain name or subdomain, it is recommended that it <em>not</em> contain <code>vpn</code>, <code>proxy</code>, <code>bitburrow</code>, <code>gateway</code>, or similar words. Public WiFi networks that restrict VPN usage may block domain names that include these. Also, choosing a name that is easy to type will make it easier for admins setting up VPN servers.</p>
+<h3 id="make-bitburrow-hub-the-authoritative-name-server">Make BitBurrow hub the authoritative name server</h3>
+<p>In the instructions below, <code>YOUR_HUB_DOMAIN</code> is the BitBurrow hub domain name, e.g. <code>vxm.example.org</code> or <code>example.org</code>, and <code>YOUR_HUB_IP</code> is the primary public IP address of your BitBurrow hub (if you don't know, try <code>wget -q -O- api.bigdatacloud.net/data/client-ip |grep ipString |grep -Eo [0-9\.]+</code>).</p>
+<ol>
+<li><strong>Do this only if you have a new subdomain of an existing domain for your organization or company.</strong> Configure the nameserver for <code>YOUR_PARENT_DOMAIN</code> (e.g. <code>example.org</code>) to have two additional records. This is usually done through the website of your domain name registrar. First, add an NS record (short for name server) for <code>YOUR_HUB_DOMAIN</code> which points to <code>YOUR_HUB_DOMAIN</code>. This tells the internet that <code>YOUR_HUB_DOMAIN</code> (e.g. <code>vxm.example.org</code>) is the authoritative nameserver for all of it's subdomains, e.g. <code>foxes.vxm.example.org</code>. Use the default TTL value. Second, add an A record for <code>YOUR_HUB_DOMAIN</code> which points to the IP address of your host. This is called a "glue record" (<a href="https://en.wikipedia.org/wiki/Domain_Name_System#Circular_dependencies_and_glue_records">more info</a>). Here is a partial zone file for <code>example.org</code> which represents these two records:
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>vxm.example.org. 86400 IN NS vxm.example.org.
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>vxm.example.org. 3600 IN A 1.2.3.4
+</code></pre></div></li>
+<li><strong>Do this only if you have a domain exclusively for BitBurrow hub.</strong> Configure <code>example.org</code> (usually done through the website of your domain name registrar) to have it's NS (name server) records point to the IP address of your BitBurrow hub. This tells the internet that <code>example.org</code> (your BitBurrow hub) is the authoritative nameserver for all of it's subdomains, e.g. <code>foxes.example.org</code>.</li>
+</ol>
+<h3 id="set-up-the-linux-server">Set up the Linux server</h3>
+<p>These instructions are written for Ubuntu. If you are setting up a new server, use the most recent Ubuntu LTS server image.</p>
+<ol>
+<li>Sign in to the Linux server, preferably as a normal user with <code>sudo</code> privileges.</li>
+<li>Configure automatic security updates (<a href="https://help.ubuntu.com/community/AutomaticSecurityUpdates">more information</a>):
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sudo apt update
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo apt install unattended-upgrades
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>sudo dpkg-reconfigure --priority=low unattended-upgrades  # choose Yes when prompted
+</code></pre></div></li>
+</ol>
+<h3 id="create-a-container">Create a container</h3>
+<p>A container helps with security by isolating BitBurrow hub from other applications running on the same server, provides a firewall from the internet, and allows the hub to run processes as root without actually being root. Additionally, to simplify the installation process below, you can run Ubuntu inside the container even if the host uses another Linux flavor.</p>
+<ol>
+<li>Install LXD:
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo snap install lxd
+</code></pre></div></li>
+<li>Initialize LXD--choose <strong>one</strong> of these lines; the first one will prompt you with options:
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>lxd init
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>lxd init --auto --storage-backend=btrfs --storage-create-loop=10
+</code></pre></div></li>
+<li>Create a new container and make aliases to run commands in it. To make future management easier, add these three 'alias' lines to your <code>.bashrc</code> or similar file. Replace <code>YOUR_LXC_NAME</code> with something to identify the container, e.g. <code>bitburrow</code> or your subdomain.
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>lxc launch ubuntu: YOUR_LXC_NAME
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>alias bbsetup=&quot;lxc exec YOUR_LXC_NAME -- sudo -u ubuntu -i&quot;
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>alias bbadmin=&quot;lxc exec YOUR_LXC_NAME -- sudo -u bitburrow -i&quot;
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>alias bbhub=&quot;lxc exec YOUR_LXC_NAME -- sudo -u bitburrow -i /home/bitburrow/bitburrow/.venv/bin/bbhub&quot;
+</code></pre></div></li>
+</ol>
+<h3 id="install-bitburrow-hub">Install BitBurrow hub</h3>
+<ol>
+<li>Download and run the installer. If the script fails, comments within the script may be helpful. It is safe to rerun <code>bbctl</code>. If the script fails with "Missing sudo password", run <code>bbsetup nano bbctl</code> (substitute <code>vi</code> for <code>nano</code> if you like), insert <code>--ask-become-pass</code> after <code>ansible-playbook</code>, and run <code>bbctl</code> again.
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>bbsetup wget https://raw.githubusercontent.com/BitBurrow/BitBurrow/main/hub_installer/bbctl
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>bbsetup sudo bash bbctl install YOUR_HUB_DOMAIN YOUR_HUB_IP
+</code></pre></div></li>
+<li>Configure. When editing <code>config.yaml</code>, note that the <code>help</code> section at the top is documentation; edit the data near the bottom to match your set-up.
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>bbadmin nano .config/bitburrow/config.yaml
+</code></pre></div></li>
+<li>Forward ports to the container. If the public-facing IP is not on the computer hosting the LXC, before running it, you will need to edit <code>/tmp/pfscript</code>, replace every occurrence of the public IP with the host's internet-facing IP, and forward those ports from the public-facing router.
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>bbhub port-forward-script &gt;/tmp/pfscript
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>bash /tmp/pfscript
+</code></pre></div></li>
+<li>Test. Rerun this until all tests pass. The most common problem is the configuration at the domain name registrar. If possible, download a zone file and compare it to the 2-line example above.
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>bbhub test all
+</code></pre></div></li>
+</ol>
+<h3 id="create-a-bitburrow-hub-administrator-account-and-coupon-code">Create a BitBurrow hub administrator account and coupon code</h3>
+<ol>
+<li>Add an admin account:
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>bbhub -q create-admin-account
+</code></pre></div></li>
+<li>Write down this login key in a safe place. It is effectively the master username and password for this BitBurrow hub.</li>
+<li>Create a coupon code (run inside container):
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>bbhub -q create-coupon-code
+</code></pre></div></li>
+<li>Write down this coupon. It is what you will distribute to others to set up their own VPN server.</li>
+</ol>
+<h3 id="restart-the-container-and-test">Restart the container and test</h3>
+<ol>
+<li>Reboot:
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>bbsetup sudo reboot
+</code></pre></div></li>
+<li>You will probably need to configure and restart your reverse proxy service.</li>
+<li>Test a connection from the client app (<code>https://YOUR_HUB_DOMAIN/welcome</code>)</li>
+</ol>
+<h3 id="upgrade-bitburrow">Upgrade BitBurrow</h3>
+<ul>
+<li>Upgrade the hub and dependencies from GitHub; note that this will temporarily disrupt users who are using the server:
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>bbsetup sudo systemctl stop bitburrow
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>bbsetup wget -O bbctl https://raw.githubusercontent.com/BitBurrow/BitBurrow/main/hub_installer/bbctl
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>bbsetup sudo bash bbctl upgrade
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>bbsetup sudo systemctl start bitburrow
+</code></pre></div></li>
+</ul>
+<h2 id="notes-for-developers">Notes for developers</h2>
+<p>The BitBurrow hub runs <a href="https://nicegui.io/">NiceGUI</a>, which uses FastAPI and Uvicorn.</p>
+<h3 id="set-up-steps">Set-up steps</h3>
+<ul>
+<li>set up a test server via <a href="https://bitburrow.com/hub/">How to set up a BitBurrow hub</a></li>
+<li>(optional) fork the BitBurrow project on GitHub</li>
+<li>clone the repo to your local computer
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>cd /your/code/repo
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>mkdir bitburrow &amp;&amp; cd $_
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>git clone https://github.com/BitBurrow/BitBurrow.git .  # or your BitBurrow fork
+</code></pre></div></li>
+<li>configure the pre-commit hooks:
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>git config core.hooksPath $(git rev-parse --show-toplevel)/git_hooks
+</code></pre></div></li>
+<li>so we can all agree on code formatting, set up <a href="https://pypi.org/project/black/">Black</a> in your code editor with the options <code>--line-length 100 --skip-string-normalization</code> (a pre-commit hook will warn you if <code>black --check ...</code> fails)</li>
+<li>edit code</li>
+</ul>
+<h3 id="testing-your-changes">Testing your changes</h3>
+<ul>
+<li>stop the BitBurrow hub service on your_hub (as user ubuntu or root):
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>sudo systemctl stop bitburrow
+</code></pre></div></li>
+<li>copy your modified files to <code>~/bitburrow/</code> on your_hub via something similar to:
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>rsync -av --delete --files-from &lt;(git ls-files; git ls-files --others --exclude-standard) \
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>    ./ bitburrow@your_hub:bitburrow/
+</code></pre></div></li>
+<li>reinstall:
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>cd ~/bitburrow/
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>poetry install
+</code></pre></div></li>
+<li>run BitBurrow hub in debug mode:
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>bitburrow/.venv/bin/bbhub -vv serve
+</code></pre></div></li>
+</ul>
+<h3 id="berror-codes">Berror codes</h3>
+<p>A Berror code, e.g. 'B46373', is a 'B' followed by a 5-digit unique number that the user can give the developer to quickly find a line of code. Every log entry and <code>raise</code> should have one. The pre-commit hook <code>git_hooks/pre-commit</code> verifies that Berror codes are unique. Generate a new one (which is <em>probably</em> unique) via:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>echo -n B; export LC_ALL=C; tr -dc 0-9 &lt;/dev/urandom |head -c 5; echo
+</code></pre></div>
+<p>You can also just make them up, but the above method is much less likely to generate duplicates.</p>
+<h3 id="coding-conventions">Coding conventions</h3>
+<ul>
+<li>Black as mentioned above</li>
+<li>Berror codes as mentioned above</li>
+<li>Use double quotes for strings that should (at some point) be translated in the UI for i18n, single quotes otherwise.</li>
+<li>Put methods above where they are called in the same file (where reasonable).</li>
+<li>Where there is embedded JavaScript, use two-space indent.</li>
+<li>Don't include blank lines within methods except those already mandated by Black.</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "toc.integrate", "navigation.top", "search.suggest", "search.highlight", "content.tabs.link", "content.code.annotation", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
