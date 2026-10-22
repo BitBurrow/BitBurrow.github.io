@@ -14,7 +14,7 @@ This page will help you set up a BitBurrow hub. For an introduction, see [BitBur
 
 1. Some background in Linux system administration and working on the command line.
 1. A Linux server with a fixed, public IPv4 address, e.g. from [DigitalOcean](https://www.digitalocean.com/), [Linode](https://www.linode.com/), or other VPS provider. BitBurrow can share the server with other services so long as TCP ports 53 and 8443, and UDP port 53 are available.
-1. A domain or subdomain name with the ability to host your own DNS (i.e. add an NS record for the subdomain). The nameserver service provided by some domain name registrars does not allow adding NS records for subdomains. This was true of Hover as of March, 2023. To work around this, yuu will need to use a different nameserver service, such as DigitalOcean, for the entire domain.
+1. A domain or subdomain name with the ability to host your own DNS (i.e. add an NS record for the subdomain). The nameserver service provided by some domain name registrars does not allow adding NS records for subdomains. This was true of Hover as of March, 2023. To work around this, yuu will need to use a different nameserver service, such as DigitalOcean, for the entire domain. The service [dot tk](http://www.dot.tk/en/index.html?lang=en) offers free domains (unverified, not tested with BitBurrow).
 1. Time to manage a public server long-term.
 
 ## Steps
@@ -90,18 +90,18 @@ A container helps with security by isolating BitBurrow hub from other applicatio
     bbhub test all
     ```
 
-### Create a BitBurrow hub administrator account and coupon code
+### Create a BitBurrow hub administrator account and invite code
 
 1. Add an admin account:
     ```
     bbhub -q create-admin-account
     ```
 1. Write down this login key in a safe place. It is effectively the master username and password for this BitBurrow hub.
-1. Create a coupon code (run inside container):
+1. Create a invite code (run inside container):
     ```
-    bbhub -q create-coupon-code
+    bbhub -q create-invite-code
     ```
-1. Write down this coupon. It is what you will distribute to others to set up their own VPN server.
+1. Write down this invite. It is what you will distribute to others to set up their own VPN server.
 
 ### Restart the container and test
 

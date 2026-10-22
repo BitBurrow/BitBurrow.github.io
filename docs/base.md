@@ -12,7 +12,7 @@ This page will help you set up a BitBurrow base. For an introduction, see [BitBu
 
 ## What you will need
 
-1. A coupon code for a BitBurrow hub. If you do not have access to one, you can [set up your own hub](hub.md) (this requires some computer experience) or ask your company or organization about doing this.
+1. A invite code for a BitBurrow hub. If you do not have access to one, you can [set up your own hub](hub.md) (this requires some computer experience) or ask your company or organization about doing this.
 1. A Flint router (GL.iNet GL-AX1800), available from [GL.iNet](https://store.gl-inet.com/collections/smart-home-gateway-mesh-router/products/flint-gl-ax1800-dual-band-gigabit-wifi-6-openwrt-adguard-home) and [Amazon.com](https://amazon.com/dp/B09HBW45ZJ) and [WalMart](https://www.walmart.com/ip/-/187628398) and [other locations](https://www.gl-inet.com/where-to-buy/#europe).
 1. Permission to set up a new router at your "VPN home" location.
 1. If you plan to continue to use the existing router at your "VPN home", you will need the login password for this router.
@@ -39,7 +39,7 @@ This page will help you set up a BitBurrow base. For an introduction, see [BitBu
 
 The BitBurrow app will walk you through the rest of the process. Here is a summary of that process.
 
-1. Scan your QR-code for the BitBurrow coupon or enter the information manually.
+1. Scan your QR-code for the BitBurrow invite or enter the information manually.
 1. You will be given a login key and be asked to write it down in a safe place.
 1. Plug in the new router and connect the Android device to its WiFi.
 1. If everything works as planned, BitBurrow will configure your router as a VPN server, prompting you if necessary. The process normally takes a few minutes.
