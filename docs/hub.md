@@ -121,6 +121,8 @@ A container helps with security by isolating BitBurrow hub from other applicatio
     # or remotely: ssh -t YOUR_HUB "bash -ic 'bbctl setup $lxc_name sudo systemctl stop bitburrow && bbctl upgrade $lxc_name && echo === successful update ==='"
     ```
 
+To use a particular Git commit, append its ID to `bbctl phase1`, `bbctl phase3`, or `bbctl upgrade`, for example `bbctl upgrade $lxc_name b8a2c72`. Specify it again for each command; otherwise, the latest `main` will be used.
+
 ## Notes for developers
 
 The BitBurrow hub runs [NiceGUI](https://nicegui.io/), which uses FastAPI and Uvicorn.
