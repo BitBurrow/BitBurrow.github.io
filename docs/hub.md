@@ -13,7 +13,7 @@ This page will help you set up a BitBurrow hub. For an introduction, see [BitBur
 ## What you will need
 
 1. Some background in Linux system administration and working on the command line.
-1. A Linux server with a fixed, public IPv4 address, e.g. from [DigitalOcean](https://www.digitalocean.com/), [Linode](https://www.linode.com/), or other VPS provider. BitBurrow can share the server with other services so long as TCP ports 53 and 8443, and UDP port 53 are available.
+1. A Linux server with a fixed, public IPv4 address, e.g. from [DigitalOcean](https://www.digitalocean.com/), [Linode](https://www.linode.com/), or other VPS provider. TCP and UDP ports 53 must be available but can be shared by multiple hub containers.
 1. A domain or subdomain name with the ability to host your own DNS (i.e. add an NS record for the subdomain). The nameserver service provided by some domain name registrars does not allow adding NS records for subdomains. This was true of Hover as of March, 2023. To work around this, yuu will need to use a different nameserver service, such as DigitalOcean, for the entire domain. The service [dot tk](http://www.dot.tk/en/index.html?lang=en) offers free domains (unverified, not tested with BitBurrow).
 1. Time to manage a public server long-term.
 
@@ -31,7 +31,7 @@ In the instructions below, `YOUR_HUB_DOMAIN` is the BitBurrow hub domain name, e
 
 1. **Do this only if you have a new subdomain of an existing domain for your organization or company.** Configure the nameserver for `YOUR_PARENT_DOMAIN` (e.g. `example.org`) to have two additional records. This is usually done through the website of your domain name registrar. First, add an NS record (short for name server) for `YOUR_HUB_DOMAIN` which points to `YOUR_HUB_DOMAIN`. This tells the internet that `YOUR_HUB_DOMAIN` (e.g. `vxm.example.org`) is the authoritative nameserver for all of it's subdomains, e.g. `foxes.vxm.example.org`. Use the default TTL value. Second, add an A record for `YOUR_HUB_DOMAIN` which points to the IP address of your host. This is called a "glue record" ([more info](https://en.wikipedia.org/wiki/Domain_Name_System#Circular_dependencies_and_glue_records)). Here is a partial zone file for `example.org` which represents these two records:
 	```
-	vxm.example.org. 86400 IN NS vxm.example.org.
+	vxm.example.org. 3600 IN NS vxm.example.org.
 	vxm.example.org. 3600 IN A 1.2.3.4
 	```
 1. **Do this only if you have a domain exclusively for BitBurrow hub.** Configure `example.org` (usually done through the website of your domain name registrar) to have it's NS (name server) records point to the IP address of your BitBurrow hub. This tells the internet that `example.org` (your BitBurrow hub) is the authoritative nameserver for all of it's subdomains, e.g. `foxes.example.org`.
@@ -48,7 +48,7 @@ These instructions are written for Ubuntu. If you are setting up a new server, u
     sudo dpkg-reconfigure --priority=low unattended-upgrades  # choose Yes when prompted
     ```
 
-### Create a container
+### Install prerequisites
 
 A container helps with security by isolating BitBurrow hub from other applications running on the same server, provides a firewall from the internet, and allows the hub to run processes as root without actually being root. Additionally, to simplify the installation process below, you can run Ubuntu inside the container even if the host uses another Linux flavor.
 
@@ -61,40 +61,39 @@ A container helps with security by isolating BitBurrow hub from other applicatio
     lxd init
     lxd init --auto --storage-backend=btrfs --storage-create-loop=10
     ```
-1. Create a new container and make aliases to run commands in it. To make future management easier, add these three 'alias' lines to your `.bashrc` or similar file. Replace `YOUR_LXC_NAME` with something to identify the container, e.g. `bitburrow` or your subdomain.
+1. Download a short `bbctl` Bash script that will be used for BitBurrow set-up and ongoing maintenance.
     ```
-    lxc launch ubuntu: YOUR_LXC_NAME
-    alias bbsetup="lxc exec YOUR_LXC_NAME -- sudo -u ubuntu -i"
-    alias bbadmin="lxc exec YOUR_LXC_NAME -- sudo -u bitburrow -i"
-    alias bbhub="lxc exec YOUR_LXC_NAME -- sudo -u bitburrow -i /home/bitburrow/bitburrow/.venv/bin/bbhub"
+    wget https://raw.githubusercontent.com/BitBurrow/BitBurrow/main/hub_installer/bbctl
+    chmod +x bbctl
+    mv -i bbctl YOUR_BIN_DIRECTORY
     ```
-
 ### Install BitBurrow hub
 
-1. Download and run the installer. If the script fails, comments within the script may be helpful. It is safe to rerun `bbctl`. If the script fails with "Missing sudo password", run `bbsetup nano bbctl` (substitute `vi` for `nano` if you like), insert ` --ask-become-pass` after `ansible-playbook`, and run `bbctl` again.
+1. Download and run the installer. Replace `YOUR_LXC_NAME` with something to identify the container, such as your subdomain. If the script fails with "Missing sudo password", edit the script via `bbctl setup YOUR_LXC_NAME nano bbsetup` (substitute `vi` for `nano` if you like), insert ` --ask-become-pass` after `ansible-playbook`, and rerun `bbctl phase1 ...`. If the script fails in another way, comments within the script may be helpful.
     ```
-    bbsetup wget https://raw.githubusercontent.com/BitBurrow/BitBurrow/main/hub_installer/bbctl
-    bbsetup sudo bash bbctl install YOUR_HUB_DOMAIN YOUR_HUB_IP
+    lxc_name=YOUR_LXC_NAME
+    bbctl init $lxc_name
+    bbctl phase1 $lxc_name
     ```
-1. Configure. When editing `config.yaml`, note that the `help` section at the top is documentation; edit the data near the bottom to match your set-up.
+1. Configure. When editing `config.yaml`, note that the `help` section at the top is documentation; edit the data near the bottom to match your set-up. At minimum, you will need to edit `frontend.domain` and `frontend.ips`, but many items are problematic to change later, so now is the best time.
     ```
-    bbadmin nano .config/bitburrow/config.yaml
+    bbctl admin $lxc_name nano .config/bitburrow/config.yaml
     ```
-1. Forward ports to the container. If the public-facing IP is not on the computer hosting the LXC, before running it, you will need to edit `/tmp/pfscript`, replace every occurrence of the public IP with the host's internet-facing IP, and forward those ports from the public-facing router.
+1. Forward ports from the container host to the LXC.
     ```
-    bbhub port-forward-script >/tmp/pfscript
-    bash /tmp/pfscript
+    bbctl hub $lxc_name port-forward-script >/tmp/pfscript
+    bash /tmp/pfscript  # follow the instructions shown
     ```
-1. Test. Rerun this until all tests pass. The most common problem is the configuration at the domain name registrar. If possible, download a zone file and compare it to the 2-line example above.
+1. Finish the installation and test. Rerun this until all tests pass. The most common problem is the configuration at the domain name registrar. If possible, download a zone file and compare it to the 2-line example above.
     ```
-    bbhub test all
+    bbctl phase3 $lxc_name
     ```
 
 ### Create a BitBurrow hub administrator account and invite code
 
 1. Add an admin account:
     ```
-    bbhub -q create-admin-account
+    bbctl hub $lxc_name -q create-admin-account
     ```
 1. Write down this login key in a safe place. It is effectively the master username and password for this BitBurrow hub.
 1. Create a invite code (run inside container):
@@ -107,7 +106,7 @@ A container helps with security by isolating BitBurrow hub from other applicatio
 
 1. Reboot:
     ```
-    bbsetup sudo reboot
+    bbctl setup $lxc_name sudo reboot
     ```
 1. You will probably need to configure and restart your reverse proxy service.
 1. Test a connection from the client app (`https://YOUR_HUB_DOMAIN/welcome`)
@@ -116,10 +115,10 @@ A container helps with security by isolating BitBurrow hub from other applicatio
 
 * Upgrade the hub and dependencies from GitHub; note that this will temporarily disrupt users who are using the server:
     ```
-    bbsetup sudo systemctl stop bitburrow
-    bbsetup wget -O bbctl https://raw.githubusercontent.com/BitBurrow/BitBurrow/main/hub_installer/bbctl
-    bbsetup sudo bash bbctl upgrade
-    bbsetup sudo systemctl start bitburrow
+    lxc_name=YOUR_LXC_NAME
+    bbctl setup $lxc_name sudo systemctl stop bitburrow
+    bbctl upgrade $lxc_name
+    # or remotely: ssh -t YOUR_HUB "bash -ic 'bbctl setup $lxc_name sudo systemctl stop bitburrow && bbctl upgrade $lxc_name && echo === successful update ==='"
     ```
 
 ## Notes for developers
