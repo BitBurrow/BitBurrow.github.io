@@ -69,31 +69,31 @@ A container helps with security by isolating BitBurrow hub from other applicatio
     ```
 ### Install BitBurrow hub
 
-1. Download and run the installer. Replace `YOUR_LXC_NAME` with something to identify the container, such as your subdomain. If the script fails with "Missing sudo password", edit the script via `bbctl setup YOUR_LXC_NAME nano bbsetup` (substitute `vi` for `nano` if you like), insert ` --ask-become-pass` after `ansible-playbook`, and rerun `bbctl phase1 ...`. If the script fails in another way, comments within the script may be helpful.
+1. Download and run the installer. Replace `YOUR_LXC_NAME` with something to identify the container, such as your subdomain. If the script fails with "Missing sudo password", edit the script via `bbctl YOUR_LXC_NAME setup nano bbsetup` (substitute `vi` for `nano` if you like), insert ` --ask-become-pass` after `ansible-playbook`, and rerun `bbctl YOUR_LXC_NAME phase1 ...`. If the script fails in another way, comments within the script may be helpful.
     ```
     lxc_name=YOUR_LXC_NAME
-    bbctl init $lxc_name
-    bbctl phase1 $lxc_name
+    bbctl $lxc_name init
+    bbctl $lxc_name phase1
     ```
 1. Configure. When editing `config.yaml`, note that the `help` section at the top is documentation; edit the data near the bottom to match your set-up. At minimum, you will need to edit `frontend.domain` and `frontend.ips`, but many items are problematic to change later, so now is the best time.
     ```
-    bbctl admin $lxc_name nano .config/bitburrow/config.yaml
+    bbctl $lxc_name admin nano .config/bitburrow/config.yaml
     ```
 1. Forward ports from the container host to the LXC.
     ```
-    bbctl hub $lxc_name port-forward-script >/tmp/pfscript
+    bbctl $lxc_name hub port-forward-script >/tmp/pfscript
     bash /tmp/pfscript  # follow the instructions shown
     ```
 1. Finish the installation and test. Rerun this until all tests pass. The most common problem is the configuration at the domain name registrar. If possible, download a zone file and compare it to the 2-line example above.
     ```
-    bbctl phase3 $lxc_name
+    bbctl $lxc_name phase3
     ```
 
 ### Create a BitBurrow hub administrator account and invite code
 
 1. Add an admin account:
     ```
-    bbctl hub $lxc_name -q create-admin-account
+    bbctl $lxc_name hub -q create-admin-account
     ```
 1. Write down this login key in a safe place. It is effectively the master username and password for this BitBurrow hub.
 1. Create a invite code (run inside container):
@@ -106,7 +106,7 @@ A container helps with security by isolating BitBurrow hub from other applicatio
 
 1. Reboot:
     ```
-    bbctl setup $lxc_name sudo reboot
+    bbctl $lxc_name setup sudo reboot
     ```
 1. You will probably need to configure and restart your reverse proxy service.
 1. Test a connection from the client app (`https://YOUR_HUB_DOMAIN/welcome`)
@@ -116,10 +116,12 @@ A container helps with security by isolating BitBurrow hub from other applicatio
 * Upgrade the hub and dependencies from GitHub; note that this will temporarily disrupt users who are using the server:
     ```
     lxc_name=YOUR_LXC_NAME
-    bbctl setup $lxc_name sudo systemctl stop bitburrow
-    bbctl upgrade $lxc_name
-    # or remotely: ssh -t YOUR_HUB "bash -ic 'bbctl setup $lxc_name sudo systemctl stop bitburrow && bbctl upgrade $lxc_name && echo === successful update ==='"
+    bbctl $lxc_name setup sudo systemctl stop bitburrow
+    bbctl $lxc_name upgrade
+    # or remotely: ssh -t YOUR_HUB "bash -ic 'bbctl $lxc_name setup sudo systemctl stop bitburrow && bbctl $lxc_name upgrade && echo === successful update ==='"
     ```
+
+To use a particular Git commit, append `--commit=ID` after `phase1`, `phase3`, or `upgrade`, for example `bbctl $lxc_name upgrade --commit=b8a2c72`. Specify it again for each command; otherwise, the latest `main` will be used.
 
 ## Notes for developers
 
